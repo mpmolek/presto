@@ -36,7 +36,7 @@ public class TestingGreenplumServer
 
     private final GenericContainer dockerContainer;
 
-    public TestingPostgreSqlServer()
+    public TestingGreenplumServer()
     {
         LOG.info("Starting GPDB docker container");
         dockerContainer = new GenericContainer<>("gpdb:latest");
