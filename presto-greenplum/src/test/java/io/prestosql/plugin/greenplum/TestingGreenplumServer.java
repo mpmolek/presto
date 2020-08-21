@@ -13,7 +13,8 @@
  */
 package io.prestosql.plugin.greenplum;
 
-import org.testcontainers.containers.PostgreSQLContainer;
+import io.airlift.log.Logger;
+import org.testcontainers.containers.GenericContainer;
 
 import java.io.Closeable;
 import java.sql.Connection;
@@ -22,25 +23,45 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import static java.lang.String.format;
-import static org.testcontainers.containers.PostgreSQLContainer.POSTGRESQL_PORT;
 
 public class TestingGreenplumServer
         implements Closeable
 {
-    private static final String USER = "test";
-    private static final String PASSWORD = "test";
+    private static final Logger LOG = Logger.get(TestingGreenplumServer.class);
+
+    private static final String USER = "gpadmin";
+    private static final String PASSWORD = "gpadmin";
     private static final String DATABASE = "tpch";
+    private static final int PORT = 5432;
 
-    //TODO greenplum container
-    private final PostgreSQLContainer dockerContainer;
+    private final GenericContainer dockerContainer;
 
-    public TestingGreenplumServer()
+    public TestingPostgreSqlServer()
     {
-        dockerContainer = new PostgreSQLContainer("postgres:10.3")
-                .withDatabaseName(DATABASE)
-                .withUsername(USER)
-                .withPassword(PASSWORD);
+        LOG.info("Starting GPDB docker container");
+        dockerContainer = new GenericContainer<>("gpdb:latest");
         dockerContainer.start();
+        LOG.info("Started GPDB docker container");
+
+        while (true) {
+            try {
+                // TODO Should just make the database configurable, but we will still want to wait for it to be ready
+                // Or otherwise find out how test containers will wait on `start` to continue the flow
+                execute(format("jdbc:postgresql://%s:%s/%s?user=%s&password=%s", dockerContainer.getContainerIpAddress(), dockerContainer.getMappedPort(PORT), "gpadmin", USER, PASSWORD),
+                        "CREATE DATABASE tpch");
+                LOG.info("Created database tpch");
+                break;
+            }
+            catch (SQLException e) {
+                LOG.info(format("Caught exception trying to create database; will retry: %s", e));
+                try {
+                    Thread.sleep(5000);
+                }
+                catch (InterruptedException interruptedException) {
+                    Thread.interrupted();
+                }
+            }
+        }
     }
 
     public void execute(String sql)
@@ -61,7 +82,7 @@ public class TestingGreenplumServer
     public String getJdbcUrl()
     {
         // TODO we should encode user and password in JDBC url, instead connection-user and connection-password catalog properties should be used
-        return format("jdbc:postgresql://%s:%s/%s?user=%s&password=%s", dockerContainer.getContainerIpAddress(), dockerContainer.getMappedPort(POSTGRESQL_PORT), DATABASE, USER, PASSWORD);
+        return format("jdbc:postgresql://%s:%s/%s?user=%s&password=%s", dockerContainer.getContainerIpAddress(), dockerContainer.getMappedPort(PORT), DATABASE, USER, PASSWORD);
     }
 
     @Override
