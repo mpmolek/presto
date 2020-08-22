@@ -65,7 +65,7 @@ import static io.airlift.json.JsonCodec.listJsonCodec;
 import static io.airlift.json.JsonCodec.mapJsonCodec;
 import static io.prestosql.plugin.greenplum.GreenplumConfig.ArrayMapping.AS_ARRAY;
 import static io.prestosql.plugin.greenplum.GreenplumConfig.ArrayMapping.AS_JSON;
-import static io.prestosql.plugin.greenplum.GreenplumQueryRunner.createPostgreSqlQueryRunner;
+import static io.prestosql.plugin.greenplum.GreenplumQueryRunner.createGreenplumQueryRunner;
 import static io.prestosql.plugin.jdbc.DecimalConfig.DecimalMapping.ALLOW_OVERFLOW;
 import static io.prestosql.plugin.jdbc.DecimalConfig.DecimalMapping.STRICT;
 import static io.prestosql.plugin.jdbc.DecimalSessionSessionProperties.DECIMAL_DEFAULT_SCALE;
@@ -144,7 +144,7 @@ public class TestGreenplumTypeMapping
             throws Exception
     {
         this.postgreSqlServer = new TestingGreenplumServer();
-        return createPostgreSqlQueryRunner(
+        return createGreenplumQueryRunner(
                 postgreSqlServer,
                 ImmutableMap.of(),
                 ImmutableMap.of("jdbc-types-mapped-to-varchar", "Tsrange, Inet" /* make sure that types are compared case insensitively */),

@@ -22,7 +22,7 @@ import io.prestosql.tpch.TpchTable;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
-import static io.prestosql.plugin.greenplum.GreenplumQueryRunner.createPostgreSqlQueryRunner;
+import static io.prestosql.plugin.greenplum.GreenplumQueryRunner.createGreenplumQueryRunner;
 
 @Test
 public class TestGreenplumDistributedQueries
@@ -35,7 +35,7 @@ public class TestGreenplumDistributedQueries
             throws Exception
     {
         this.postgreSqlServer = new TestingGreenplumServer();
-        return createPostgreSqlQueryRunner(
+        return createGreenplumQueryRunner(
                 postgreSqlServer,
                 ImmutableMap.of(),
                 ImmutableMap.<String, String>builder()

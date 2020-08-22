@@ -47,7 +47,7 @@ public class TestGreenplumIntegrationSmokeTest
     {
         this.postgreSqlServer = new TestingGreenplumServer();
 //        execute("CREATE EXTENSION file_fdw");
-        return GreenplumQueryRunner.createPostgreSqlQueryRunner(postgreSqlServer, CUSTOMER, NATION, ORDERS, REGION);
+        return GreenplumQueryRunner.createGreenplumQueryRunner(postgreSqlServer, CUSTOMER, NATION, ORDERS, REGION);
     }
 
     @AfterClass(alwaysRun = true)

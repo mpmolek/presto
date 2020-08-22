@@ -77,18 +77,6 @@
             <artifactId>joda-time</artifactId>
         </dependency>
 
-        <!--
-        TODO: local dependency for testing. Need to decide how to handle this.
-        Download from: https://network.pivotal.io/products/pivotal-gpdb#/releases/716903/file_groups/2739
-        -->
-        <dependency>
-            <groupId>com.pivotal</groupId>
-            <artifactId>greenplum-jdbc-driver</artifactId>
-            <version>5.1.4</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/src/lib/PROGRESS_DATADIRECT_JDBC_DRIVER_PIVOTAL_GREENPLUM_5.1.4.000275.jar</systemPath>
-        </dependency>
-
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
@@ -186,6 +174,18 @@
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <!--
+        TODO: local dependency for testing. Need to decide how to handle this.
+        Download from: https://network.pivotal.io/products/pivotal-gpdb#/releases/716903/file_groups/2739
+        -->
+        <dependency>
+            <groupId>com.pivotal</groupId>
+            <artifactId>greenplum-jdbc-driver</artifactId>
+            <version>5.1.4</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/lib/PROGRESS_DATADIRECT_JDBC_DRIVER_PIVOTAL_GREENPLUM_5.1.4.000275.jar</systemPath>
         </dependency>
     </dependencies>
 </project>

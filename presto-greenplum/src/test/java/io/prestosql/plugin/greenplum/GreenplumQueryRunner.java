@@ -37,13 +37,13 @@ public final class GreenplumQueryRunner
 
     private static final String TPCH_SCHEMA = "tpch";
 
-    public static QueryRunner createPostgreSqlQueryRunner(TestingGreenplumServer server, TpchTable<?>... tables)
+    public static QueryRunner createGreenplumQueryRunner(TestingGreenplumServer server, TpchTable<?>... tables)
             throws Exception
     {
-        return createPostgreSqlQueryRunner(server, ImmutableMap.of(), ImmutableMap.of(), ImmutableList.copyOf(tables));
+        return createGreenplumQueryRunner(server, ImmutableMap.of(), ImmutableMap.of(), ImmutableList.copyOf(tables));
     }
 
-    public static DistributedQueryRunner createPostgreSqlQueryRunner(
+    public static DistributedQueryRunner createGreenplumQueryRunner(
             TestingGreenplumServer server,
             Map<String, String> extraProperties,
             Map<String, String> connectorProperties,
@@ -62,7 +62,7 @@ public final class GreenplumQueryRunner
             connectorProperties = new HashMap<>(ImmutableMap.copyOf(connectorProperties));
             connectorProperties.putIfAbsent("connection-url", server.getJdbcUrl());
             connectorProperties.putIfAbsent("allow-drop-table", "true");
-            connectorProperties.putIfAbsent("postgresql.include-system-tables", "true");
+            connectorProperties.putIfAbsent("greenplum.include-system-tables", "true");
 
             server.execute("CREATE SCHEMA tpch");
 
@@ -92,7 +92,7 @@ public final class GreenplumQueryRunner
     {
         Logging.initialize();
 
-        DistributedQueryRunner queryRunner = createPostgreSqlQueryRunner(
+        DistributedQueryRunner queryRunner = createGreenplumQueryRunner(
                 new TestingGreenplumServer(),
                 ImmutableMap.of("http-server.http.port", "8080"),
                 ImmutableMap.of(),

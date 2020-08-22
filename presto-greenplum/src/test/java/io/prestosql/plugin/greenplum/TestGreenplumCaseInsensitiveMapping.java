@@ -42,7 +42,7 @@ public class TestGreenplumCaseInsensitiveMapping
             throws Exception
     {
         this.postgreSqlServer = new TestingGreenplumServer();
-        return GreenplumQueryRunner.createPostgreSqlQueryRunner(
+        return GreenplumQueryRunner.createGreenplumQueryRunner(
                 postgreSqlServer,
                 ImmutableMap.of(),
                 ImmutableMap.of("case-insensitive-name-matching", "true"),
