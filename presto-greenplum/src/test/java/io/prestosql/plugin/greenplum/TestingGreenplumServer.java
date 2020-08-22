@@ -21,6 +21,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.Duration;
 
 import static java.lang.String.format;
 
@@ -38,7 +39,7 @@ public class TestingGreenplumServer
     {
         dockerContainer = new GenericContainer<>("gpdb:latest");
         dockerContainer.addEnv("DATABASE", "tpch");
-        dockerContainer.waitingFor(Wait.forHealthcheck());
+        dockerContainer.waitingFor(Wait.forHealthcheck().withStartupTimeout(Duration.ofMinutes(10)));
         dockerContainer.start();
     }
 
