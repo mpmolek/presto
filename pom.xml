@@ -95,7 +95,7 @@
         <module>presto-geospatial</module>
         <module>presto-geospatial-toolkit</module>
         <module>presto-google-sheets</module>
-        <!--<module>presto-greenplum</module>-->
+        <module>presto-greenplum</module>
         <module>presto-hive</module>
         <module>presto-hive-hadoop2</module>
         <module>presto-iceberg</module>

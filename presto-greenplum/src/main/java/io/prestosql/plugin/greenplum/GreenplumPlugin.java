@@ -20,6 +20,6 @@ public class GreenplumPlugin
 {
     public GreenplumPlugin()
     {
-        super("postgresql", new GreenplumClientModule());
+        super("greenplum", new GreenplumClientModule());
     }
 }
