@@ -13,8 +13,8 @@
  */
 package io.prestosql.plugin.greenplum;
 
-import io.airlift.log.Logger;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.wait.strategy.Wait;
 
 import java.io.Closeable;
 import java.sql.Connection;
@@ -27,8 +27,6 @@ import static java.lang.String.format;
 public class TestingGreenplumServer
         implements Closeable
 {
-    private static final Logger LOG = Logger.get(TestingGreenplumServer.class);
-
     private static final String USER = "gpadmin";
     private static final String PASSWORD = "gpadmin";
     private static final String DATABASE = "tpch";
@@ -38,31 +36,10 @@ public class TestingGreenplumServer
 
     public TestingGreenplumServer()
     {
-        LOG.info("Starting GPDB docker container");
         dockerContainer = new GenericContainer<>("gpdb:latest");
+        dockerContainer.addEnv("DATABASE", "tpch");
+        dockerContainer.waitingFor(Wait.forHealthcheck());
         dockerContainer.start();
-        LOG.info("Started GPDB docker container");
-
-        while (true) {
-            try {
-                // TODO Should just make the database configurable, but we will still want to wait for it to be ready
-                // Or otherwise find out how test containers will wait on `start` to continue the flow
-                String postgresConnect = format("jdbc:postgresql://%s:%s/%s?user=%s&password=%s", dockerContainer.getContainerIpAddress(), dockerContainer.getMappedPort(PORT), "gpadmin", USER, PASSWORD);
-                String gbpdConnect = format("jdbc:pivotal:greenplum://%s:%s/%s?user=%s&password=%s", dockerContainer.getContainerIpAddress(), dockerContainer.getMappedPort(PORT), "gpadmin", USER, PASSWORD);
-                execute(postgresConnect, "CREATE DATABASE tpch");
-                LOG.info("Created database tpch");
-                break;
-            }
-            catch (SQLException e) {
-                LOG.info(format("Caught exception trying to create database; will retry: %s", e));
-                try {
-                    Thread.sleep(5000);
-                }
-                catch (InterruptedException interruptedException) {
-                    Thread.interrupted();
-                }
-            }
-        }
     }
 
     public void execute(String sql)
