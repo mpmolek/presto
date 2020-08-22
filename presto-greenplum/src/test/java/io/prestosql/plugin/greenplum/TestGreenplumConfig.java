@@ -29,20 +29,23 @@ public class TestGreenplumConfig
     {
         assertRecordedDefaults(recordDefaults(GreenplumConfig.class)
                 .setArrayMapping(GreenplumConfig.ArrayMapping.DISABLED)
-                .setIncludeSystemTables(false));
+                .setIncludeSystemTables(false)
+                .setUseGPDBDriver(false));
     }
 
     @Test
     public void testExplicitPropertyMappings()
     {
         Map<String, String> properties = new ImmutableMap.Builder<String, String>()
-                .put("postgresql.array-mapping", "AS_ARRAY")
-                .put("postgresql.include-system-tables", "true")
+                .put("greenplum.array-mapping", "AS_ARRAY")
+                .put("greenplum.include-system-tables", "true")
+                .put("greenplum.use-gpdb-driver", "true")
                 .build();
 
         GreenplumConfig expected = new GreenplumConfig()
                 .setArrayMapping(GreenplumConfig.ArrayMapping.AS_ARRAY)
-                .setIncludeSystemTables(true);
+                .setIncludeSystemTables(true)
+                .setUseGPDBDriver(true);
 
         assertFullMapping(properties, expected);
     }

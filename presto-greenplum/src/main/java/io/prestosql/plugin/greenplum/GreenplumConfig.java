@@ -14,7 +14,6 @@
 package io.prestosql.plugin.greenplum;
 
 import io.airlift.configuration.Config;
-import io.airlift.configuration.LegacyConfig;
 
 import javax.validation.constraints.NotNull;
 
@@ -22,6 +21,7 @@ public class GreenplumConfig
 {
     private ArrayMapping arrayMapping = ArrayMapping.DISABLED;
     private boolean includeSystemTables;
+    private boolean useGPDBDriver;
 
     public enum ArrayMapping
     {
@@ -36,8 +36,7 @@ public class GreenplumConfig
         return arrayMapping;
     }
 
-    @Config("postgresql.array-mapping")
-    @LegacyConfig("postgresql.experimental.array-mapping")
+    @Config("greenplum.array-mapping")
     public GreenplumConfig setArrayMapping(ArrayMapping arrayMapping)
     {
         this.arrayMapping = arrayMapping;
@@ -49,10 +48,22 @@ public class GreenplumConfig
         return includeSystemTables;
     }
 
-    @Config("postgresql.include-system-tables")
+    @Config("greenplum.include-system-tables")
     public GreenplumConfig setIncludeSystemTables(boolean includeSystemTables)
     {
         this.includeSystemTables = includeSystemTables;
+        return this;
+    }
+
+    public boolean isUseGPDBDriver()
+    {
+        return useGPDBDriver;
+    }
+
+    @Config("greenplum.use-gpdb-driver")
+    public GreenplumConfig setUseGPDBDriver(boolean useGPDBDriver)
+    {
+        this.useGPDBDriver = useGPDBDriver;
         return this;
     }
 }

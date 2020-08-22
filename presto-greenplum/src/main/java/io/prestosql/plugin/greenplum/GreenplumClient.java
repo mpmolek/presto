@@ -216,7 +216,7 @@ public class GreenplumClient
     protected void renameTable(JdbcIdentity identity, String catalogName, String schemaName, String tableName, SchemaTableName newTable)
     {
         if (!schemaName.equals(newTable.getSchemaName())) {
-            throw new PrestoException(NOT_SUPPORTED, "Table rename across schemas is not supported in PostgreSQL");
+            throw new PrestoException(NOT_SUPPORTED, "Table rename across schemas is not supported in Greenplum");
         }
 
         String sql = format(
