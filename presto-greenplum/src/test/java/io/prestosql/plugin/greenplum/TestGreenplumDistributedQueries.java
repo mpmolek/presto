@@ -28,15 +28,15 @@ import static io.prestosql.plugin.greenplum.GreenplumQueryRunner.createGreenplum
 public class TestGreenplumDistributedQueries
         extends AbstractTestDistributedQueries
 {
-    private TestingGreenplumServer postgreSqlServer;
+    private TestingGreenplumServer greenplumServer;
 
     @Override
     protected QueryRunner createQueryRunner()
             throws Exception
     {
-        this.postgreSqlServer = new TestingGreenplumServer();
+        this.greenplumServer = new TestingGreenplumServer();
         return createGreenplumQueryRunner(
-                postgreSqlServer,
+                greenplumServer,
                 ImmutableMap.of(),
                 ImmutableMap.<String, String>builder()
                         // caching here speeds up tests highly, caching is not used in smoke tests
@@ -49,7 +49,7 @@ public class TestGreenplumDistributedQueries
     @AfterClass(alwaysRun = true)
     public final void destroy()
     {
-        postgreSqlServer.close();
+        greenplumServer.close();
     }
 
     @Override
@@ -69,7 +69,7 @@ public class TestGreenplumDistributedQueries
     protected TestTable createTableWithDefaultColumns()
     {
         return new TestTable(
-                new JdbcSqlExecutor(postgreSqlServer.getJdbcUrl()),
+                new JdbcSqlExecutor(greenplumServer.getJdbcUrl()),
                 "tpch.table",
                 "(col_required BIGINT NOT NULL," +
                         "col_nullable BIGINT," +

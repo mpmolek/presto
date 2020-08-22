@@ -35,15 +35,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TestGreenplumCaseInsensitiveMapping
         extends AbstractTestQueryFramework
 {
-    private TestingGreenplumServer postgreSqlServer;
+    private TestingGreenplumServer greenplumServer;
 
     @Override
     protected QueryRunner createQueryRunner()
             throws Exception
     {
-        this.postgreSqlServer = new TestingGreenplumServer();
+        this.greenplumServer = new TestingGreenplumServer();
         return GreenplumQueryRunner.createGreenplumQueryRunner(
-                postgreSqlServer,
+                greenplumServer,
                 ImmutableMap.of(),
                 ImmutableMap.of("case-insensitive-name-matching", "true"),
                 ImmutableSet.of());
@@ -52,7 +52,7 @@ public class TestGreenplumCaseInsensitiveMapping
     @AfterClass(alwaysRun = true)
     public final void destroy()
     {
-        postgreSqlServer.close();
+        greenplumServer.close();
     }
 
     @Test
@@ -174,7 +174,7 @@ public class TestGreenplumCaseInsensitiveMapping
 
     private void execute(String sql)
     {
-        try (Connection connection = DriverManager.getConnection(postgreSqlServer.getJdbcUrl());
+        try (Connection connection = DriverManager.getConnection(greenplumServer.getJdbcUrl());
                 Statement statement = connection.createStatement()) {
             statement.execute(sql);
         }

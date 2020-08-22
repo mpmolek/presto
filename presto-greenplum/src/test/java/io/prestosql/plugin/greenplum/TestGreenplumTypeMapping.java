@@ -116,7 +116,7 @@ public class TestGreenplumTypeMapping
     private static final LocalDate EPOCH_DAY = LocalDate.ofEpochDay(0);
     private static final JsonCodec<List<Map<String, String>>> HSTORE_CODEC = listJsonCodec(mapJsonCodec(String.class, String.class));
 
-    private TestingGreenplumServer postgreSqlServer;
+    private TestingGreenplumServer greenplumServer;
 
     private final LocalDateTime beforeEpoch = LocalDateTime.of(1958, 1, 1, 13, 18, 3, 123_000_000);
     private final LocalDateTime epoch = LocalDateTime.of(1970, 1, 1, 0, 0, 0);
@@ -143,9 +143,9 @@ public class TestGreenplumTypeMapping
     protected QueryRunner createQueryRunner()
             throws Exception
     {
-        this.postgreSqlServer = new TestingGreenplumServer();
+        this.greenplumServer = new TestingGreenplumServer();
         return createGreenplumQueryRunner(
-                postgreSqlServer,
+                greenplumServer,
                 ImmutableMap.of(),
                 ImmutableMap.of("jdbc-types-mapped-to-varchar", "Tsrange, Inet" /* make sure that types are compared case insensitively */),
                 ImmutableList.of());
@@ -154,7 +154,7 @@ public class TestGreenplumTypeMapping
     @AfterClass(alwaysRun = true)
     public final void destroy()
     {
-        postgreSqlServer.close();
+        greenplumServer.close();
     }
 
     @BeforeClass
@@ -169,7 +169,7 @@ public class TestGreenplumTypeMapping
 
         checkIsGap(kathmandu, timeGapInKathmandu);
 
-        JdbcSqlExecutor executor = new JdbcSqlExecutor(postgreSqlServer.getJdbcUrl());
+        JdbcSqlExecutor executor = new JdbcSqlExecutor(greenplumServer.getJdbcUrl());
         executor.execute("CREATE EXTENSION hstore");
     }
 
@@ -317,7 +317,7 @@ public class TestGreenplumTypeMapping
     @Test
     public void testForcedMappingToVarchar()
     {
-        JdbcSqlExecutor jdbcSqlExecutor = new JdbcSqlExecutor(postgreSqlServer.getJdbcUrl());
+        JdbcSqlExecutor jdbcSqlExecutor = new JdbcSqlExecutor(greenplumServer.getJdbcUrl());
         jdbcSqlExecutor.execute("CREATE TABLE tpch.test_forced_varchar_mapping(tsrange_col tsrange, inet_col inet, tsrange_arr_col tsrange[], unsupported_nonforced_column tstzrange)");
         jdbcSqlExecutor.execute("INSERT INTO tpch.test_forced_varchar_mapping(tsrange_col, inet_col, tsrange_arr_col, unsupported_nonforced_column) " +
                 "VALUES ('[2010-01-01 14:30, 2010-01-01 15:30)'::tsrange, '172.0.0.1'::inet, array['[2010-01-01 14:30, 2010-01-01 15:30)'::tsrange], '[2010-01-01 14:30, 2010-01-01 15:30)'::tstzrange)");
@@ -368,7 +368,7 @@ public class TestGreenplumTypeMapping
     @Test
     public void testDecimalExceedingPrecisionMaxWithExceedingIntegerValues()
     {
-        JdbcSqlExecutor jdbcSqlExecutor = new JdbcSqlExecutor(postgreSqlServer.getJdbcUrl());
+        JdbcSqlExecutor jdbcSqlExecutor = new JdbcSqlExecutor(greenplumServer.getJdbcUrl());
 
         try (TestTable testTable = new TestTable(
                 jdbcSqlExecutor,
@@ -401,7 +401,7 @@ public class TestGreenplumTypeMapping
     @Test
     public void testDecimalExceedingPrecisionMaxWithNonExceedingIntegerValues()
     {
-        JdbcSqlExecutor jdbcSqlExecutor = new JdbcSqlExecutor(postgreSqlServer.getJdbcUrl());
+        JdbcSqlExecutor jdbcSqlExecutor = new JdbcSqlExecutor(greenplumServer.getJdbcUrl());
 
         try (TestTable testTable = new TestTable(
                 jdbcSqlExecutor,
@@ -458,7 +458,7 @@ public class TestGreenplumTypeMapping
     @Test(dataProvider = "testDecimalExceedingPrecisionMaxProvider")
     public void testDecimalExceedingPrecisionMaxWithSupportedValues(int typePrecision, int typeScale)
     {
-        JdbcSqlExecutor jdbcSqlExecutor = new JdbcSqlExecutor(postgreSqlServer.getJdbcUrl());
+        JdbcSqlExecutor jdbcSqlExecutor = new JdbcSqlExecutor(greenplumServer.getJdbcUrl());
 
         try (TestTable testTable = new TestTable(
                 jdbcSqlExecutor,
@@ -520,7 +520,7 @@ public class TestGreenplumTypeMapping
     @Test
     public void testDecimalUnspecifiedPrecisionWithSupportedValues()
     {
-        JdbcSqlExecutor jdbcSqlExecutor = new JdbcSqlExecutor(postgreSqlServer.getJdbcUrl());
+        JdbcSqlExecutor jdbcSqlExecutor = new JdbcSqlExecutor(greenplumServer.getJdbcUrl());
 
         try (TestTable testTable = new TestTable(
                 jdbcSqlExecutor,
@@ -573,7 +573,7 @@ public class TestGreenplumTypeMapping
     @Test
     public void testDecimalUnspecifiedPrecisionWithExceedingValue()
     {
-        JdbcSqlExecutor jdbcSqlExecutor = new JdbcSqlExecutor(postgreSqlServer.getJdbcUrl());
+        JdbcSqlExecutor jdbcSqlExecutor = new JdbcSqlExecutor(greenplumServer.getJdbcUrl());
         try (TestTable testTable = new TestTable(
                 jdbcSqlExecutor,
                 "tpch.test_var_decimal_with_exceeding_value",
@@ -765,7 +765,7 @@ public class TestGreenplumTypeMapping
     public void testArrayAsJson()
     {
         Session session = Session.builder(getQueryRunner().getDefaultSession())
-                .setSystemProperty("postgresql.array_mapping", AS_JSON.name())
+                .setSystemProperty("greenplum.array_mapping", AS_JSON.name())
                 .build();
 
         DataTypeTest.create()
@@ -919,7 +919,7 @@ public class TestGreenplumTypeMapping
     @Test
     public void testEnum()
     {
-        JdbcSqlExecutor jdbcSqlExecutor = new JdbcSqlExecutor(postgreSqlServer.getJdbcUrl());
+        JdbcSqlExecutor jdbcSqlExecutor = new JdbcSqlExecutor(greenplumServer.getJdbcUrl());
         jdbcSqlExecutor.execute("CREATE TYPE enum_t AS ENUM ('a','b','c')");
         jdbcSqlExecutor.execute("CREATE TABLE tpch.test_enum(id int, enum_column enum_t)");
         jdbcSqlExecutor.execute("INSERT INTO tpch.test_enum(id,enum_column) values (1,'a'::enum_t),(2,'b'::enum_t)");
@@ -1273,7 +1273,7 @@ public class TestGreenplumTypeMapping
 
     private void testUnsupportedDataTypeAsIgnored(String dataTypeName, String databaseValue)
     {
-        JdbcSqlExecutor jdbcSqlExecutor = new JdbcSqlExecutor(postgreSqlServer.getJdbcUrl());
+        JdbcSqlExecutor jdbcSqlExecutor = new JdbcSqlExecutor(greenplumServer.getJdbcUrl());
         try (TestTable table = new TestTable(
                 jdbcSqlExecutor,
                 "tpch.unsupported_type",
@@ -1293,7 +1293,7 @@ public class TestGreenplumTypeMapping
 
     private void testUnsupportedDataTypeConvertedToVarchar(String dataTypeName, String databaseValue, String prestoValue)
     {
-        JdbcSqlExecutor jdbcSqlExecutor = new JdbcSqlExecutor(postgreSqlServer.getJdbcUrl());
+        JdbcSqlExecutor jdbcSqlExecutor = new JdbcSqlExecutor(greenplumServer.getJdbcUrl());
         try (TestTable table = new TestTable(
                 jdbcSqlExecutor,
                 "tpch.unsupported_type",
@@ -1338,7 +1338,7 @@ public class TestGreenplumTypeMapping
     private Session withUnsupportedType(UnsupportedTypeHandling unsupportedTypeHandling)
     {
         return Session.builder(getSession())
-                .setCatalogSessionProperty("postgresql", UNSUPPORTED_TYPE_HANDLING, unsupportedTypeHandling.name())
+                .setCatalogSessionProperty("greenplum", UNSUPPORTED_TYPE_HANDLING, unsupportedTypeHandling.name())
                 .build();
     }
 
@@ -1454,24 +1454,24 @@ public class TestGreenplumTypeMapping
     private Session sessionWithArrayAsArray()
     {
         return Session.builder(getQueryRunner().getDefaultSession())
-                .setSystemProperty("postgresql.array_mapping", AS_ARRAY.name())
+                .setSystemProperty("greenplum.array_mapping", AS_ARRAY.name())
                 .build();
     }
 
     private Session sessionWithDecimalMappingAllowOverflow(RoundingMode roundingMode, int scale)
     {
         return Session.builder(getQueryRunner().getDefaultSession())
-                .setCatalogSessionProperty("postgresql", DECIMAL_MAPPING, ALLOW_OVERFLOW.name())
-                .setCatalogSessionProperty("postgresql", DECIMAL_ROUNDING_MODE, roundingMode.name())
-                .setCatalogSessionProperty("postgresql", DECIMAL_DEFAULT_SCALE, Integer.valueOf(scale).toString())
+                .setCatalogSessionProperty("greenplum", DECIMAL_MAPPING, ALLOW_OVERFLOW.name())
+                .setCatalogSessionProperty("greenplum", DECIMAL_ROUNDING_MODE, roundingMode.name())
+                .setCatalogSessionProperty("greenplum", DECIMAL_DEFAULT_SCALE, Integer.valueOf(scale).toString())
                 .build();
     }
 
     private Session sessionWithDecimalMappingStrict(UnsupportedTypeHandling unsupportedTypeHandling)
     {
         return Session.builder(getQueryRunner().getDefaultSession())
-                .setCatalogSessionProperty("postgresql", DECIMAL_MAPPING, STRICT.name())
-                .setCatalogSessionProperty("postgresql", UNSUPPORTED_TYPE_HANDLING, unsupportedTypeHandling.name())
+                .setCatalogSessionProperty("greenplum", DECIMAL_MAPPING, STRICT.name())
+                .setCatalogSessionProperty("greenplum", UNSUPPORTED_TYPE_HANDLING, unsupportedTypeHandling.name())
                 .build();
     }
 
@@ -1487,12 +1487,12 @@ public class TestGreenplumTypeMapping
 
     private DataSetup postgresCreateAndInsert(String tableNamePrefix)
     {
-        return new CreateAndInsertDataSetup(new JdbcSqlExecutor(postgreSqlServer.getJdbcUrl()), tableNamePrefix);
+        return new CreateAndInsertDataSetup(new JdbcSqlExecutor(greenplumServer.getJdbcUrl()), tableNamePrefix);
     }
 
     private DataSetup postgresCreatePrestoInsert(String tableNamePrefix)
     {
-        return new CreateAndPrestoInsertDataSetup(new JdbcSqlExecutor(postgreSqlServer.getJdbcUrl()), new PrestoSqlExecutor(getQueryRunner()), tableNamePrefix);
+        return new CreateAndPrestoInsertDataSetup(new JdbcSqlExecutor(greenplumServer.getJdbcUrl()), new PrestoSqlExecutor(getQueryRunner()), tableNamePrefix);
     }
 
     private static void checkIsGap(ZoneId zone, LocalDateTime dateTime)

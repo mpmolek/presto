@@ -39,21 +39,21 @@ import static org.testng.Assert.assertTrue;
 public class TestGreenplumIntegrationSmokeTest
         extends AbstractTestIntegrationSmokeTest
 {
-    protected TestingGreenplumServer postgreSqlServer;
+    protected TestingGreenplumServer greenplumServer;
 
     @Override
     protected QueryRunner createQueryRunner()
             throws Exception
     {
-        this.postgreSqlServer = new TestingGreenplumServer();
+        this.greenplumServer = new TestingGreenplumServer();
 //        execute("CREATE EXTENSION file_fdw");
-        return GreenplumQueryRunner.createGreenplumQueryRunner(postgreSqlServer, CUSTOMER, NATION, ORDERS, REGION);
+        return GreenplumQueryRunner.createGreenplumQueryRunner(greenplumServer, CUSTOMER, NATION, ORDERS, REGION);
     }
 
     @AfterClass(alwaysRun = true)
     public final void destroy()
     {
-        postgreSqlServer.close();
+        greenplumServer.close();
     }
 
     @Test
@@ -409,7 +409,7 @@ public class TestGreenplumIntegrationSmokeTest
     private void execute(String sql)
             throws SQLException
     {
-        try (Connection connection = DriverManager.getConnection(postgreSqlServer.getJdbcUrl());
+        try (Connection connection = DriverManager.getConnection(greenplumServer.getJdbcUrl());
                 Statement statement = connection.createStatement()) {
             statement.execute(sql);
         }
