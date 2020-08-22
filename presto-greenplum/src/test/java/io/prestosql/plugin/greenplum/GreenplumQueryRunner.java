@@ -63,11 +63,12 @@ public final class GreenplumQueryRunner
             connectorProperties.putIfAbsent("connection-url", server.getJdbcUrl());
             connectorProperties.putIfAbsent("allow-drop-table", "true");
             connectorProperties.putIfAbsent("greenplum.include-system-tables", "true");
+            //connectorProperties.putIfAbsent("greenplum.use-gpdb-driver", "true");
 
             server.execute("CREATE SCHEMA tpch");
 
             queryRunner.installPlugin(new GreenplumPlugin());
-            queryRunner.createCatalog("postgresql", "postgresql", connectorProperties);
+            queryRunner.createCatalog("greenplum", "greenplum", connectorProperties);
 
             copyTpchTables(queryRunner, "tpch", TINY_SCHEMA_NAME, createSession(), tables);
 
@@ -82,7 +83,7 @@ public final class GreenplumQueryRunner
     public static Session createSession()
     {
         return testSessionBuilder()
-                .setCatalog("postgresql")
+                .setCatalog("greenplum")
                 .setSchema(TPCH_SCHEMA)
                 .build();
     }

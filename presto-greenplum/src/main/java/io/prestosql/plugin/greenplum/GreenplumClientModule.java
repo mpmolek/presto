@@ -55,6 +55,7 @@ public class GreenplumClientModule
         if (greenplumConfig.isUseGPDBDriver()) {
             java.sql.Driver greenplumDriver;
             try {
+                log.info("Using GPDB driver");
                 greenplumDriver = (java.sql.Driver) Class.forName("com.pivotal.jdbc.GreenplumDriver").getConstructor().newInstance();
             }
             catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException e) {
@@ -65,6 +66,7 @@ public class GreenplumClientModule
             return new DriverConnectionFactory(greenplumDriver, config, credentialProvider);
         }
         else {
+            log.info("Using PostgreSQL driver");
             return new DriverConnectionFactory(new Driver(), config, credentialProvider);
         }
     }

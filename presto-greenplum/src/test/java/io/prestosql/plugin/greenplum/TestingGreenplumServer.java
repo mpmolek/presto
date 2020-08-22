@@ -47,8 +47,7 @@ public class TestingGreenplumServer
             try {
                 // TODO Should just make the database configurable, but we will still want to wait for it to be ready
                 // Or otherwise find out how test containers will wait on `start` to continue the flow
-                execute(format("jdbc:postgresql://%s:%s/%s?user=%s&password=%s", dockerContainer.getContainerIpAddress(), dockerContainer.getMappedPort(PORT), "gpadmin", USER, PASSWORD),
-                        "CREATE DATABASE tpch");
+                execute(getJdbcUrl(), "CREATE DATABASE tpch");
                 LOG.info("Created database tpch");
                 break;
             }
@@ -81,8 +80,10 @@ public class TestingGreenplumServer
 
     public String getJdbcUrl()
     {
-        // TODO we should encode user and password in JDBC url, instead connection-user and connection-password catalog properties should be used
-        return format("jdbc:postgresql://%s:%s/%s?user=%s&password=%s", dockerContainer.getContainerIpAddress(), dockerContainer.getMappedPort(PORT), DATABASE, USER, PASSWORD);
+        // TODO we should not encode user and password in JDBC url, instead connection-user and connection-password catalog properties should be used
+        String postgresConnect = format("jdbc:postgresql://%s:%s/%s?user=%s&password=%s", dockerContainer.getContainerIpAddress(), dockerContainer.getMappedPort(PORT), "gpadmin", USER, PASSWORD);
+        String gbpdConnect = format("jdbc:pivotal:greenplum://%s:%s/%s?user=%s&password=%s", dockerContainer.getContainerIpAddress(), dockerContainer.getMappedPort(PORT), "gpadmin", USER, PASSWORD);
+        return postgresConnect;
     }
 
     @Override
