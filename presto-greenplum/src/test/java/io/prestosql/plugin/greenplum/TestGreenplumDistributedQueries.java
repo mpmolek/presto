@@ -46,9 +46,10 @@ public class TestGreenplumDistributedQueries
                 TpchTable.getTables());
     }
 
-    @AfterClass(alwaysRun = true)
-    public final void destroy()
+    @Override
+    public final void close()
     {
+        super.close();
         greenplumServer.close();
     }
 
