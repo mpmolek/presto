@@ -1369,6 +1369,7 @@ public class TestGreenplumTypeMapping
         return dataType(
                 "jsonb",
                 JSON,
+                value -> "JSONB " + formatStringLiteral(value),
                 value -> "JSON " + formatStringLiteral(value),
                 identity());
     }

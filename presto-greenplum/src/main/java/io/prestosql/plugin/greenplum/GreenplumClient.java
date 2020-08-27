@@ -437,7 +437,7 @@ public class GreenplumClient
             return WriteMapping.longMapping("smallint", tinyintWriteFunction());
         }
         if (type.equals(jsonType)) {
-            return WriteMapping.sliceMapping("jsonb", typedVarcharWriteFunction("json"));
+            return WriteMapping.sliceMapping("jsonb", typedVarcharWriteFunction("jsonb"));
         }
         if (type.equals(uuidType)) {
             return WriteMapping.sliceMapping("uuid", uuidWriteFunction());
