@@ -46,7 +46,7 @@ public class TestGreenplumDistributedQueries
                 TpchTable.getTables());
     }
 
-    @Override
+    @AfterClass
     public final void close()
     {
         super.close();
@@ -92,5 +92,5 @@ public class TestGreenplumDistributedQueries
         // delete is not supported
     }
 
-    // PostgreSQL specific tests should normally go in TestPostgreSqlIntegrationSmokeTest
+    // Greenplum specific tests should normally go in TestGreenplumIntegrationSmokeTest
 }
