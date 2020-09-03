@@ -59,11 +59,21 @@ public class TestPostgreSqlClient
                     .setJdbcTypeHandle(new JdbcTypeHandle(Types.DOUBLE, Optional.of("double"), 0, 0, Optional.empty(), Optional.empty()))
                     .build();
 
-    private static final JdbcClient JDBC_CLIENT = new PostgreSqlClient(
-            new BaseJdbcConfig(),
-            new PostgreSqlConfig(),
-            identity -> { throw new UnsupportedOperationException(); },
-            TYPE_MANAGER);
+    private final JdbcClient jdbcClient;
+
+    public TestPostgreSqlClient()
+    {
+        jdbcClient = getPostgreSqlClient();
+    }
+
+    protected PostgreSqlClient getPostgreSqlClient()
+    {
+        return new PostgreSqlClient(
+                new BaseJdbcConfig(),
+                new PostgreSqlConfig(),
+                identity -> { throw new UnsupportedOperationException(); },
+                TYPE_MANAGER);
+    }
 
     @Test
     public void testImplementCount()
@@ -144,14 +154,14 @@ public class TestPostgreSqlClient
 
     private void testImplementAggregation(AggregateFunction aggregateFunction, Map<String, ColumnHandle> assignments, Optional<String> expectedExpression)
     {
-        Optional<JdbcExpression> result = JDBC_CLIENT.implementAggregation(SESSION, aggregateFunction, assignments);
+        Optional<JdbcExpression> result = jdbcClient.implementAggregation(SESSION, aggregateFunction, assignments);
         if (expectedExpression.isEmpty()) {
             assertThat(result).isEmpty();
         }
         else {
             assertThat(result).isPresent();
             assertEquals(result.get().getExpression(), expectedExpression.get());
-            Optional<ColumnMapping> columnMapping = JDBC_CLIENT.toPrestoType(SESSION, null, result.get().getJdbcTypeHandle());
+            Optional<ColumnMapping> columnMapping = jdbcClient.toPrestoType(SESSION, null, result.get().getJdbcTypeHandle());
             assertTrue(columnMapping.isPresent(), "No mapping for: " + result.get().getJdbcTypeHandle());
             assertEquals(columnMapping.get().getType(), aggregateFunction.getOutputType());
         }

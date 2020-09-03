@@ -15,6 +15,7 @@ package io.prestosql.plugin.greenplum;
 
 import com.google.common.collect.ImmutableList;
 import io.prestosql.plugin.jdbc.SessionPropertiesProvider;
+import io.prestosql.plugin.postgresql.PostgreSqlConfig.ArrayMapping;
 import io.prestosql.spi.connector.ConnectorSession;
 import io.prestosql.spi.session.PropertyMetadata;
 
@@ -37,8 +38,8 @@ public final class GreenplumSessionProperties
         sessionProperties = ImmutableList.of(
                 enumProperty(
                         ARRAY_MAPPING,
-                        "Handling of PostgreSql arrays",
-                        GreenplumConfig.ArrayMapping.class,
+                        "Handling of Greenplum arrays",
+                        ArrayMapping.class,
                         greenplumConfig.getArrayMapping(),
                         false));
     }
@@ -49,8 +50,8 @@ public final class GreenplumSessionProperties
         return sessionProperties;
     }
 
-    public static GreenplumConfig.ArrayMapping getArrayMapping(ConnectorSession session)
+    public static ArrayMapping getArrayMapping(ConnectorSession session)
     {
-        return session.getProperty(ARRAY_MAPPING, GreenplumConfig.ArrayMapping.class);
+        return session.getProperty(ARRAY_MAPPING, ArrayMapping.class);
     }
 }

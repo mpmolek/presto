@@ -152,9 +152,11 @@ public class TestPostgreSqlTypeMapping
     }
 
     @AfterClass(alwaysRun = true)
-    public final void destroy()
+    public void destroy()
     {
-        postgreSqlServer.close();
+        if (postgreSqlServer != null) {
+            postgreSqlServer.close();
+        }
     }
 
     @BeforeClass
@@ -1364,7 +1366,7 @@ public class TestPostgreSqlTypeMapping
                 zonedDateTime -> zonedDateTime.withZoneSameInstant(ZoneId.of("UTC")));
     }
 
-    public static DataType<String> jsonbDataType()
+    protected DataType<String> jsonbDataType()
     {
         return dataType(
                 "jsonb",

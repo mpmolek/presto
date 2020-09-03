@@ -63,7 +63,6 @@ public final class GreenplumQueryRunner
             connectorProperties.putIfAbsent("connection-url", server.getJdbcUrl());
             connectorProperties.putIfAbsent("allow-drop-table", "true");
             connectorProperties.putIfAbsent("greenplum.include-system-tables", "true");
-            //connectorProperties.putIfAbsent("greenplum.use-gpdb-driver", "true");
 
             server.execute("CREATE SCHEMA tpch");
 

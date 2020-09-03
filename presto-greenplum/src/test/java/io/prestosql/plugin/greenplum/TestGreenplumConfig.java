@@ -14,6 +14,7 @@
 package io.prestosql.plugin.greenplum;
 
 import com.google.common.collect.ImmutableMap;
+import io.prestosql.plugin.postgresql.PostgreSqlConfig.ArrayMapping;
 import org.testng.annotations.Test;
 
 import java.util.Map;
@@ -28,9 +29,8 @@ public class TestGreenplumConfig
     public void testDefaults()
     {
         assertRecordedDefaults(recordDefaults(GreenplumConfig.class)
-                .setArrayMapping(GreenplumConfig.ArrayMapping.DISABLED)
-                .setIncludeSystemTables(false)
-                .setUseGPDBDriver(false));
+                .setArrayMapping(ArrayMapping.DISABLED)
+                .setIncludeSystemTables(false));
     }
 
     @Test
@@ -39,13 +39,11 @@ public class TestGreenplumConfig
         Map<String, String> properties = new ImmutableMap.Builder<String, String>()
                 .put("greenplum.array-mapping", "AS_ARRAY")
                 .put("greenplum.include-system-tables", "true")
-                .put("greenplum.use-gpdb-driver", "true")
                 .build();
 
         GreenplumConfig expected = new GreenplumConfig()
-                .setArrayMapping(GreenplumConfig.ArrayMapping.AS_ARRAY)
-                .setIncludeSystemTables(true)
-                .setUseGPDBDriver(true);
+                .setArrayMapping(ArrayMapping.AS_ARRAY)
+                .setIncludeSystemTables(true);
 
         assertFullMapping(properties, expected);
     }

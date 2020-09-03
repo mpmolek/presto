@@ -29,6 +29,20 @@
         </dependency>
 
         <dependency>
+            <groupId>io.prestosql</groupId>
+            <artifactId>presto-postgresql</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.prestosql</groupId>
+            <artifactId>presto-postgresql</artifactId>
+            <version>${project.version}</version>
+            <classifier>tests</classifier>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>io.airlift</groupId>
             <artifactId>configuration</artifactId>
         </dependency>

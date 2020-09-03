@@ -680,7 +680,7 @@ public class PostgreSqlClient
                 typedVarcharWriteFunction(jdbcTypeName));
     }
 
-    private static SliceWriteFunction typedVarcharWriteFunction(String jdbcTypeName)
+    protected static SliceWriteFunction typedVarcharWriteFunction(String jdbcTypeName)
     {
         return (statement, index, value) -> {
             PGobject pgObject = new PGobject();

@@ -14,10 +14,8 @@
 package io.prestosql.plugin.greenplum;
 
 import com.google.common.collect.ImmutableMap;
-import io.prestosql.testing.AbstractTestDistributedQueries;
+import io.prestosql.plugin.postgresql.TestPostgreSqlDistributedQueries;
 import io.prestosql.testing.QueryRunner;
-import io.prestosql.testing.sql.JdbcSqlExecutor;
-import io.prestosql.testing.sql.TestTable;
 import io.prestosql.tpch.TpchTable;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
@@ -26,7 +24,7 @@ import static io.prestosql.plugin.greenplum.GreenplumQueryRunner.createGreenplum
 
 @Test
 public class TestGreenplumDistributedQueries
-        extends AbstractTestDistributedQueries
+        extends TestPostgreSqlDistributedQueries
 {
     private TestingGreenplumServer greenplumServer;
 
@@ -46,51 +44,9 @@ public class TestGreenplumDistributedQueries
                 TpchTable.getTables());
     }
 
-    @AfterClass
-    public final void close()
+    @AfterClass(alwaysRun = true)
+    public void shutdownServer()
     {
-        super.close();
         greenplumServer.close();
     }
-
-    @Override
-    protected boolean supportsViews()
-    {
-        return false;
-    }
-
-    @Override
-    protected boolean supportsArrays()
-    {
-        // Arrays are supported conditionally. Check the defaults.
-        return new GreenplumConfig().getArrayMapping() != GreenplumConfig.ArrayMapping.DISABLED;
-    }
-
-    @Override
-    protected TestTable createTableWithDefaultColumns()
-    {
-        return new TestTable(
-                new JdbcSqlExecutor(greenplumServer.getJdbcUrl()),
-                "tpch.table",
-                "(col_required BIGINT NOT NULL," +
-                        "col_nullable BIGINT," +
-                        "col_default BIGINT DEFAULT 43," +
-                        "col_nonnull_default BIGINT NOT NULL DEFAULT 42," +
-                        "col_required2 BIGINT NOT NULL)");
-    }
-
-    @Override
-    public void testCommentTable()
-    {
-        // PostgreSQL connector currently does not support comment on table
-        assertQueryFails("COMMENT ON TABLE orders IS 'hello'", "This connector does not support setting table comments");
-    }
-
-    @Override
-    public void testDelete()
-    {
-        // delete is not supported
-    }
-
-    // Greenplum specific tests should normally go in TestGreenplumIntegrationSmokeTest
 }

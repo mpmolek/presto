@@ -60,7 +60,6 @@ public class TestingGreenplumServer
 
     public String getJdbcUrl()
     {
-        // TODO we should encode user and password in JDBC url, instead connection-user and connection-password catalog properties should be used
         return format("jdbc:postgresql://%s:%s/%s?user=%s&password=%s", dockerContainer.getContainerIpAddress(), dockerContainer.getMappedPort(PORT), DATABASE, USER, PASSWORD);
     }
 

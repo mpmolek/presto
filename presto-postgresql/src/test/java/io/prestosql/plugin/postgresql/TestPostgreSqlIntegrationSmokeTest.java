@@ -51,9 +51,11 @@ public class TestPostgreSqlIntegrationSmokeTest
     }
 
     @AfterClass(alwaysRun = true)
-    public final void destroy()
+    public void destroy()
     {
-        postgreSqlServer.close();
+        if (postgreSqlServer != null) {
+            postgreSqlServer.close();
+        }
     }
 
     @Test

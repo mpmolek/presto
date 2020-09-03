@@ -28,8 +28,6 @@ import io.prestosql.plugin.jdbc.JdbcClient;
 import io.prestosql.plugin.jdbc.credential.CredentialProvider;
 import org.postgresql.Driver;
 
-import java.lang.reflect.InvocationTargetException;
-
 import static io.airlift.configuration.ConfigBinder.configBinder;
 import static io.prestosql.plugin.jdbc.JdbcModule.bindSessionPropertiesProvider;
 
@@ -52,22 +50,6 @@ public class GreenplumClientModule
     @ForBaseJdbc
     public ConnectionFactory getConnectionFactory(BaseJdbcConfig config, GreenplumConfig greenplumConfig, CredentialProvider credentialProvider)
     {
-        if (greenplumConfig.isUseGPDBDriver()) {
-            java.sql.Driver greenplumDriver;
-            try {
-                log.info("Using GPDB driver");
-                greenplumDriver = (java.sql.Driver) Class.forName("com.pivotal.jdbc.GreenplumDriver").getConstructor().newInstance();
-            }
-            catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException e) {
-                String msg = "Failed to instantiate GreenplumDriver";
-                log.error(e, msg);
-                throw new RuntimeException(msg, e);
-            }
-            return new DriverConnectionFactory(greenplumDriver, config, credentialProvider);
-        }
-        else {
-            log.info("Using PostgreSQL driver");
-            return new DriverConnectionFactory(new Driver(), config, credentialProvider);
-        }
+        return new DriverConnectionFactory(new Driver(), config, credentialProvider);
     }
 }
