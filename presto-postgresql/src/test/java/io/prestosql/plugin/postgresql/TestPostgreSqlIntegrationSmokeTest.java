@@ -58,6 +58,11 @@ public class TestPostgreSqlIntegrationSmokeTest
         }
     }
 
+    protected String getJdbcUrl()
+    {
+        return postgreSqlServer.getJdbcUrl();
+    }
+
     @Test
     public void testDropTable()
     {
@@ -410,7 +415,7 @@ public class TestPostgreSqlIntegrationSmokeTest
     private void execute(String sql)
             throws SQLException
     {
-        try (Connection connection = DriverManager.getConnection(postgreSqlServer.getJdbcUrl());
+        try (Connection connection = DriverManager.getConnection(getJdbcUrl());
                 Statement statement = connection.createStatement()) {
             statement.execute(sql);
         }

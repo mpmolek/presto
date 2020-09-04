@@ -38,6 +38,12 @@ public class TestGreenplumIntegrationSmokeTest
         return GreenplumQueryRunner.createGreenplumQueryRunner(greenplumServer, CUSTOMER, NATION, ORDERS, REGION);
     }
 
+    @Override
+    protected String getJdbcUrl()
+    {
+        return greenplumServer.getJdbcUrl();
+    }
+
     @AfterClass(alwaysRun = true)
     public void shutdownServer()
     {

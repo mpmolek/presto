@@ -52,6 +52,18 @@ public class TestGreenplumTypeMapping
     }
 
     @Override
+    protected String getCatalogName()
+    {
+        return "greenplum";
+    }
+
+    @Override
+    protected String getJdbcUrl()
+    {
+        return greenplumServer.getJdbcUrl();
+    }
+
+    @Override
     protected DataType<String> jsonbDataType()
     {
         return dataType(

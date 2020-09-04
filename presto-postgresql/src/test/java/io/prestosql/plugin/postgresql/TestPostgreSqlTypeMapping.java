@@ -115,6 +115,7 @@ public class TestPostgreSqlTypeMapping
 {
     private static final LocalDate EPOCH_DAY = LocalDate.ofEpochDay(0);
     private static final JsonCodec<List<Map<String, String>>> HSTORE_CODEC = listJsonCodec(mapJsonCodec(String.class, String.class));
+    private static final String CATALOG_NAME = "postgresql";
 
     private TestingPostgreSqlServer postgreSqlServer;
 
@@ -159,6 +160,16 @@ public class TestPostgreSqlTypeMapping
         }
     }
 
+    protected String getCatalogName()
+    {
+        return CATALOG_NAME;
+    }
+
+    protected String getJdbcUrl()
+    {
+        return postgreSqlServer.getJdbcUrl();
+    }
+
     @BeforeClass
     public void setUp()
     {
@@ -171,7 +182,7 @@ public class TestPostgreSqlTypeMapping
 
         checkIsGap(kathmandu, timeGapInKathmandu);
 
-        JdbcSqlExecutor executor = new JdbcSqlExecutor(postgreSqlServer.getJdbcUrl());
+        JdbcSqlExecutor executor = new JdbcSqlExecutor(getJdbcUrl());
         executor.execute("CREATE EXTENSION hstore");
     }
 
@@ -319,7 +330,7 @@ public class TestPostgreSqlTypeMapping
     @Test
     public void testForcedMappingToVarchar()
     {
-        JdbcSqlExecutor jdbcSqlExecutor = new JdbcSqlExecutor(postgreSqlServer.getJdbcUrl());
+        JdbcSqlExecutor jdbcSqlExecutor = new JdbcSqlExecutor(getJdbcUrl());
         jdbcSqlExecutor.execute("CREATE TABLE tpch.test_forced_varchar_mapping(tsrange_col tsrange, inet_col inet, tsrange_arr_col tsrange[], unsupported_nonforced_column tstzrange)");
         jdbcSqlExecutor.execute("INSERT INTO tpch.test_forced_varchar_mapping(tsrange_col, inet_col, tsrange_arr_col, unsupported_nonforced_column) " +
                 "VALUES ('[2010-01-01 14:30, 2010-01-01 15:30)'::tsrange, '172.0.0.1'::inet, array['[2010-01-01 14:30, 2010-01-01 15:30)'::tsrange], '[2010-01-01 14:30, 2010-01-01 15:30)'::tstzrange)");
@@ -370,7 +381,7 @@ public class TestPostgreSqlTypeMapping
     @Test
     public void testDecimalExceedingPrecisionMaxWithExceedingIntegerValues()
     {
-        JdbcSqlExecutor jdbcSqlExecutor = new JdbcSqlExecutor(postgreSqlServer.getJdbcUrl());
+        JdbcSqlExecutor jdbcSqlExecutor = new JdbcSqlExecutor(getJdbcUrl());
 
         try (TestTable testTable = new TestTable(
                 jdbcSqlExecutor,
@@ -403,7 +414,7 @@ public class TestPostgreSqlTypeMapping
     @Test
     public void testDecimalExceedingPrecisionMaxWithNonExceedingIntegerValues()
     {
-        JdbcSqlExecutor jdbcSqlExecutor = new JdbcSqlExecutor(postgreSqlServer.getJdbcUrl());
+        JdbcSqlExecutor jdbcSqlExecutor = new JdbcSqlExecutor(getJdbcUrl());
 
         try (TestTable testTable = new TestTable(
                 jdbcSqlExecutor,
@@ -460,7 +471,7 @@ public class TestPostgreSqlTypeMapping
     @Test(dataProvider = "testDecimalExceedingPrecisionMaxProvider")
     public void testDecimalExceedingPrecisionMaxWithSupportedValues(int typePrecision, int typeScale)
     {
-        JdbcSqlExecutor jdbcSqlExecutor = new JdbcSqlExecutor(postgreSqlServer.getJdbcUrl());
+        JdbcSqlExecutor jdbcSqlExecutor = new JdbcSqlExecutor(getJdbcUrl());
 
         try (TestTable testTable = new TestTable(
                 jdbcSqlExecutor,
@@ -522,7 +533,7 @@ public class TestPostgreSqlTypeMapping
     @Test
     public void testDecimalUnspecifiedPrecisionWithSupportedValues()
     {
-        JdbcSqlExecutor jdbcSqlExecutor = new JdbcSqlExecutor(postgreSqlServer.getJdbcUrl());
+        JdbcSqlExecutor jdbcSqlExecutor = new JdbcSqlExecutor(getJdbcUrl());
 
         try (TestTable testTable = new TestTable(
                 jdbcSqlExecutor,
@@ -575,7 +586,7 @@ public class TestPostgreSqlTypeMapping
     @Test
     public void testDecimalUnspecifiedPrecisionWithExceedingValue()
     {
-        JdbcSqlExecutor jdbcSqlExecutor = new JdbcSqlExecutor(postgreSqlServer.getJdbcUrl());
+        JdbcSqlExecutor jdbcSqlExecutor = new JdbcSqlExecutor(getJdbcUrl());
         try (TestTable testTable = new TestTable(
                 jdbcSqlExecutor,
                 "tpch.test_var_decimal_with_exceeding_value",
@@ -767,7 +778,7 @@ public class TestPostgreSqlTypeMapping
     public void testArrayAsJson()
     {
         Session session = Session.builder(getQueryRunner().getDefaultSession())
-                .setSystemProperty("postgresql.array_mapping", AS_JSON.name())
+                .setSystemProperty(getCatalogName() + ".array_mapping", AS_JSON.name())
                 .build();
 
         DataTypeTest.create()
@@ -921,7 +932,7 @@ public class TestPostgreSqlTypeMapping
     @Test
     public void testEnum()
     {
-        JdbcSqlExecutor jdbcSqlExecutor = new JdbcSqlExecutor(postgreSqlServer.getJdbcUrl());
+        JdbcSqlExecutor jdbcSqlExecutor = new JdbcSqlExecutor(getJdbcUrl());
         jdbcSqlExecutor.execute("CREATE TYPE enum_t AS ENUM ('a','b','c')");
         jdbcSqlExecutor.execute("CREATE TABLE tpch.test_enum(id int, enum_column enum_t)");
         jdbcSqlExecutor.execute("INSERT INTO tpch.test_enum(id,enum_column) values (1,'a'::enum_t),(2,'b'::enum_t)");
@@ -1275,7 +1286,7 @@ public class TestPostgreSqlTypeMapping
 
     private void testUnsupportedDataTypeAsIgnored(String dataTypeName, String databaseValue)
     {
-        JdbcSqlExecutor jdbcSqlExecutor = new JdbcSqlExecutor(postgreSqlServer.getJdbcUrl());
+        JdbcSqlExecutor jdbcSqlExecutor = new JdbcSqlExecutor(getJdbcUrl());
         try (TestTable table = new TestTable(
                 jdbcSqlExecutor,
                 "tpch.unsupported_type",
@@ -1295,7 +1306,7 @@ public class TestPostgreSqlTypeMapping
 
     private void testUnsupportedDataTypeConvertedToVarchar(String dataTypeName, String databaseValue, String prestoValue)
     {
-        JdbcSqlExecutor jdbcSqlExecutor = new JdbcSqlExecutor(postgreSqlServer.getJdbcUrl());
+        JdbcSqlExecutor jdbcSqlExecutor = new JdbcSqlExecutor(getJdbcUrl());
         try (TestTable table = new TestTable(
                 jdbcSqlExecutor,
                 "tpch.unsupported_type",
@@ -1340,7 +1351,7 @@ public class TestPostgreSqlTypeMapping
     private Session withUnsupportedType(UnsupportedTypeHandling unsupportedTypeHandling)
     {
         return Session.builder(getSession())
-                .setCatalogSessionProperty("postgresql", UNSUPPORTED_TYPE_HANDLING, unsupportedTypeHandling.name())
+                .setCatalogSessionProperty(getCatalogName(), UNSUPPORTED_TYPE_HANDLING, unsupportedTypeHandling.name())
                 .build();
     }
 
@@ -1456,25 +1467,35 @@ public class TestPostgreSqlTypeMapping
     private Session sessionWithArrayAsArray()
     {
         return Session.builder(getQueryRunner().getDefaultSession())
-                .setSystemProperty("postgresql.array_mapping", AS_ARRAY.name())
+                .setSystemProperty(getCatalogName() + ".array_mapping", AS_ARRAY.name())
                 .build();
     }
 
     private Session sessionWithDecimalMappingAllowOverflow(RoundingMode roundingMode, int scale)
     {
         return Session.builder(getQueryRunner().getDefaultSession())
-                .setCatalogSessionProperty("postgresql", DECIMAL_MAPPING, ALLOW_OVERFLOW.name())
-                .setCatalogSessionProperty("postgresql", DECIMAL_ROUNDING_MODE, roundingMode.name())
-                .setCatalogSessionProperty("postgresql", DECIMAL_DEFAULT_SCALE, Integer.valueOf(scale).toString())
+                .setCatalogSessionProperty(getCatalogName(), DECIMAL_MAPPING, ALLOW_OVERFLOW.name())
+                .setCatalogSessionProperty(getCatalogName(), DECIMAL_ROUNDING_MODE, roundingMode.name())
+                .setCatalogSessionProperty(getCatalogName(), DECIMAL_DEFAULT_SCALE, Integer.valueOf(scale).toString())
                 .build();
     }
 
     private Session sessionWithDecimalMappingStrict(UnsupportedTypeHandling unsupportedTypeHandling)
     {
         return Session.builder(getQueryRunner().getDefaultSession())
-                .setCatalogSessionProperty("postgresql", DECIMAL_MAPPING, STRICT.name())
-                .setCatalogSessionProperty("postgresql", UNSUPPORTED_TYPE_HANDLING, unsupportedTypeHandling.name())
+                .setCatalogSessionProperty(getCatalogName(), DECIMAL_MAPPING, STRICT.name())
+                .setCatalogSessionProperty(getCatalogName(), UNSUPPORTED_TYPE_HANDLING, unsupportedTypeHandling.name())
                 .build();
+    }
+
+    private DataSetup postgresCreateAndInsert(String tableNamePrefix)
+    {
+        return new CreateAndInsertDataSetup(new JdbcSqlExecutor(getJdbcUrl()), tableNamePrefix);
+    }
+
+    private DataSetup postgresCreatePrestoInsert(String tableNamePrefix)
+    {
+        return new CreateAndPrestoInsertDataSetup(new JdbcSqlExecutor(getJdbcUrl()), new PrestoSqlExecutor(getQueryRunner()), tableNamePrefix);
     }
 
     private DataSetup prestoCreateAsSelect(String tableNamePrefix)
@@ -1485,16 +1506,6 @@ public class TestPostgreSqlTypeMapping
     private DataSetup prestoCreateAsSelect(Session session, String tableNamePrefix)
     {
         return new CreateAsSelectDataSetup(new PrestoSqlExecutor(getQueryRunner(), session), tableNamePrefix);
-    }
-
-    private DataSetup postgresCreateAndInsert(String tableNamePrefix)
-    {
-        return new CreateAndInsertDataSetup(new JdbcSqlExecutor(postgreSqlServer.getJdbcUrl()), tableNamePrefix);
-    }
-
-    private DataSetup postgresCreatePrestoInsert(String tableNamePrefix)
-    {
-        return new CreateAndPrestoInsertDataSetup(new JdbcSqlExecutor(postgreSqlServer.getJdbcUrl()), new PrestoSqlExecutor(getQueryRunner()), tableNamePrefix);
     }
 
     private static void checkIsGap(ZoneId zone, LocalDateTime dateTime)

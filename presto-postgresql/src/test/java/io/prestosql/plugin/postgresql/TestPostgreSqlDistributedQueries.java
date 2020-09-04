@@ -54,6 +54,11 @@ public class TestPostgreSqlDistributedQueries
         }
     }
 
+    protected String getJdbcUrl()
+    {
+        return postgreSqlServer.getJdbcUrl();
+    }
+
     @Override
     protected boolean supportsViews()
     {
@@ -71,7 +76,7 @@ public class TestPostgreSqlDistributedQueries
     protected TestTable createTableWithDefaultColumns()
     {
         return new TestTable(
-                new JdbcSqlExecutor(postgreSqlServer.getJdbcUrl()),
+                new JdbcSqlExecutor(getJdbcUrl()),
                 "tpch.table",
                 "(col_required BIGINT NOT NULL," +
                         "col_nullable BIGINT," +

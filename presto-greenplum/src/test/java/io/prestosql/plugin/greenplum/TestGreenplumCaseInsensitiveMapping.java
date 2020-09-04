@@ -55,4 +55,10 @@ public class TestGreenplumCaseInsensitiveMapping
     {
         greenplumServer.close();
     }
+
+    @Override
+    protected String getJdbcUrl()
+    {
+        return greenplumServer.getJdbcUrl();
+    }
 }

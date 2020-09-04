@@ -57,6 +57,11 @@ public class TestPostgreSqlCaseInsensitiveMapping
         }
     }
 
+    protected String getJdbcUrl()
+    {
+        return postgreSqlServer.getJdbcUrl();
+    }
+
     @Test
     public void testNonLowerCaseSchemaName()
             throws Exception
@@ -174,9 +179,9 @@ public class TestPostgreSqlCaseInsensitiveMapping
         return () -> execute(format("DROP TABLE %s", tableName));
     }
 
-    private void execute(String sql)
+    protected void execute(String sql)
     {
-        try (Connection connection = DriverManager.getConnection(postgreSqlServer.getJdbcUrl());
+        try (Connection connection = DriverManager.getConnection(getJdbcUrl());
                 Statement statement = connection.createStatement()) {
             statement.execute(sql);
         }
