@@ -37,7 +37,7 @@ public class TestingGreenplumServer
 
     public TestingGreenplumServer()
     {
-        dockerContainer = new GenericContainer<>("gpdb:latest");
+        dockerContainer = new GenericContainer<>("prestodev/gpdb-6");
         dockerContainer.addEnv("DATABASE", "tpch");
         dockerContainer.waitingFor(Wait.forHealthcheck().withStartupTimeout(Duration.ofMinutes(10)));
         dockerContainer.start();
