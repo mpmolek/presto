@@ -185,17 +185,17 @@ public class TestGreenplumTypeMapping
                 .addRoundTrip(doubleDataType(), 123.45d)
                 .addRoundTrip(realDataType(), 123.45f)
                 .addRoundTrip(dataType("tinyint", SMALLINT, Object::toString, result -> (short) result), (byte) 5)
-                .execute(getQueryRunner(), prestoCreateAsSelect("test_basic_types"));
+                .execute(getQueryRunner(), greenplumCreateAsSelect("test_basic_types"));
     }
 
     @Test
     public void testVarbinary()
     {
         varbinaryTestCases(varbinaryDataType())
-                .execute(getQueryRunner(), prestoCreateAsSelect("test_varbinary"));
+                .execute(getQueryRunner(), greenplumCreateAsSelect("test_varbinary"));
 
         varbinaryTestCases(byteaDataType())
-                .execute(getQueryRunner(), postgresCreateAndInsert("tpch.test_varbinary"));
+                .execute(getQueryRunner(), greenplumCreateAndInsert("tpch.test_varbinary"));
     }
 
     private DataTypeTest varbinaryTestCases(DataType<byte[]> varbinaryDataType)
@@ -213,14 +213,14 @@ public class TestGreenplumTypeMapping
     public void testPrestoCreatedParameterizedVarchar()
     {
         varcharDataTypeTest()
-                .execute(getQueryRunner(), prestoCreateAsSelect("presto_test_parameterized_varchar"));
+                .execute(getQueryRunner(), greenplumCreateAsSelect("presto_test_parameterized_varchar"));
     }
 
     @Test
-    public void testPostgreSqlCreatedParameterizedVarchar()
+    public void testGreenplumCreatedParameterizedVarchar()
     {
         varcharDataTypeTest()
-                .execute(getQueryRunner(), postgresCreateAndInsert("tpch.postgresql_test_parameterized_varchar"));
+                .execute(getQueryRunner(), greenplumCreateAndInsert("tpch.greenplum_test_parameterized_varchar"));
     }
 
     private DataTypeTest varcharDataTypeTest()
@@ -237,28 +237,28 @@ public class TestGreenplumTypeMapping
     public void testPrestoCreatedParameterizedVarcharUnicode()
     {
         unicodeVarcharDateTypeTest()
-                .execute(getQueryRunner(), prestoCreateAsSelect("postgresql_test_parameterized_varchar_unicode"));
+                .execute(getQueryRunner(), greenplumCreateAsSelect("greenplum_test_parameterized_varchar_unicode"));
     }
 
     @Test
-    public void testPostgreSqlCreatedParameterizedVarcharUnicode()
+    public void testGreenplumCreatedParameterizedVarcharUnicode()
     {
         unicodeVarcharDateTypeTest()
-                .execute(getQueryRunner(), postgresCreateAndInsert("tpch.postgresql_test_parameterized_varchar_unicode"));
+                .execute(getQueryRunner(), greenplumCreateAndInsert("tpch.greenplum_test_parameterized_varchar_unicode"));
     }
 
     @Test
     public void testPrestoCreatedParameterizedCharUnicode()
     {
         unicodeDataTypeTest(DataType::charDataType)
-                .execute(getQueryRunner(), prestoCreateAsSelect("postgresql_test_parameterized_char_unicode"));
+                .execute(getQueryRunner(), greenplumCreateAsSelect("greenplum_test_parameterized_char_unicode"));
     }
 
     @Test
-    public void testPostgreSqlCreatedParameterizedCharUnicode()
+    public void testGreenplumCreatedParameterizedCharUnicode()
     {
         unicodeDataTypeTest(DataType::charDataType)
-                .execute(getQueryRunner(), postgresCreateAndInsert("tpch.postgresql_test_parameterized_char_unicode"));
+                .execute(getQueryRunner(), greenplumCreateAndInsert("tpch.greenplum_test_parameterized_char_unicode"));
     }
 
     private DataTypeTest unicodeVarcharDateTypeTest()
@@ -280,17 +280,17 @@ public class TestGreenplumTypeMapping
     }
 
     @Test
-    public void testPostgresSqlCreatedDecimal()
+    public void testGreenplumCreatedDecimal()
     {
         decimalTests()
-                .execute(getQueryRunner(), postgresCreateAndInsert("tpch.test_decimal"));
+                .execute(getQueryRunner(), greenplumCreateAndInsert("tpch.test_decimal"));
     }
 
     @Test
     public void testPrestoCreatedDecimal()
     {
         decimalTests()
-                .execute(getQueryRunner(), prestoCreateAsSelect("test_decimal"));
+                .execute(getQueryRunner(), greenplumCreateAsSelect("test_decimal"));
     }
 
     private DataTypeTest decimalTests()
@@ -617,31 +617,31 @@ public class TestGreenplumTypeMapping
                 .addRoundTrip(arrayDataType(smallintDataType()), asList((short) 32_456))
                 .addRoundTrip(arrayDataType(doubleDataType()), asList(123.45d))
                 .addRoundTrip(arrayDataType(realDataType()), asList(123.45f))
-                .execute(getQueryRunner(), sessionWithArrayAsArray(), prestoCreateAsSelect(sessionWithArrayAsArray(), "test_array_basic"));
+                .execute(getQueryRunner(), sessionWithArrayAsArray(), greenplumCreateAsSelect(sessionWithArrayAsArray(), "test_array_basic"));
 
         arrayDateTest(TestGreenplumTypeMapping::arrayDataType)
-                .execute(getQueryRunner(), sessionWithArrayAsArray(), prestoCreateAsSelect(sessionWithArrayAsArray(), "test_array_date"));
-        arrayDateTest(TestGreenplumTypeMapping::postgresArrayDataType)
-                .execute(getQueryRunner(), sessionWithArrayAsArray(), postgresCreateAndInsert("tpch.test_array_date"));
+                .execute(getQueryRunner(), sessionWithArrayAsArray(), greenplumCreateAsSelect(sessionWithArrayAsArray(), "test_array_date"));
+        arrayDateTest(TestGreenplumTypeMapping::greenplumArrayDataType)
+                .execute(getQueryRunner(), sessionWithArrayAsArray(), greenplumCreateAndInsert("tpch.test_array_date"));
 
         arrayDecimalTest(TestGreenplumTypeMapping::arrayDataType)
-                .execute(getQueryRunner(), sessionWithArrayAsArray(), prestoCreateAsSelect(sessionWithArrayAsArray(), "test_array_decimal"));
-        arrayDecimalTest(TestGreenplumTypeMapping::postgresArrayDataType)
-                .execute(getQueryRunner(), sessionWithArrayAsArray(), postgresCreateAndInsert("tpch.test_array_decimal"));
+                .execute(getQueryRunner(), sessionWithArrayAsArray(), greenplumCreateAsSelect(sessionWithArrayAsArray(), "test_array_decimal"));
+        arrayDecimalTest(TestGreenplumTypeMapping::greenplumArrayDataType)
+                .execute(getQueryRunner(), sessionWithArrayAsArray(), greenplumCreateAndInsert("tpch.test_array_decimal"));
 
         arrayVarcharDataTypeTest(TestGreenplumTypeMapping::arrayDataType)
-                .execute(getQueryRunner(), sessionWithArrayAsArray(), prestoCreateAsSelect(sessionWithArrayAsArray(), "test_array_varchar"));
-        arrayVarcharDataTypeTest(TestGreenplumTypeMapping::postgresArrayDataType)
-                .execute(getQueryRunner(), sessionWithArrayAsArray(), postgresCreateAndInsert("tpch.test_array_varchar"));
+                .execute(getQueryRunner(), sessionWithArrayAsArray(), greenplumCreateAsSelect(sessionWithArrayAsArray(), "test_array_varchar"));
+        arrayVarcharDataTypeTest(TestGreenplumTypeMapping::greenplumArrayDataType)
+                .execute(getQueryRunner(), sessionWithArrayAsArray(), greenplumCreateAndInsert("tpch.test_array_varchar"));
 
         arrayUnicodeDataTypeTest(TestGreenplumTypeMapping::arrayDataType, DataType::charDataType)
-                .execute(getQueryRunner(), sessionWithArrayAsArray(), prestoCreateAsSelect(sessionWithArrayAsArray(), "test_array_parameterized_char_unicode"));
-        arrayUnicodeDataTypeTest(TestGreenplumTypeMapping::postgresArrayDataType, DataType::charDataType)
-                .execute(getQueryRunner(), sessionWithArrayAsArray(), postgresCreateAndInsert("tpch.test_array_parameterized_char_unicode"));
+                .execute(getQueryRunner(), sessionWithArrayAsArray(), greenplumCreateAsSelect(sessionWithArrayAsArray(), "test_array_parameterized_char_unicode"));
+        arrayUnicodeDataTypeTest(TestGreenplumTypeMapping::greenplumArrayDataType, DataType::charDataType)
+                .execute(getQueryRunner(), sessionWithArrayAsArray(), greenplumCreateAndInsert("tpch.test_array_parameterized_char_unicode"));
         arrayVarcharUnicodeDataTypeTest(TestGreenplumTypeMapping::arrayDataType)
-                .execute(getQueryRunner(), sessionWithArrayAsArray(), prestoCreateAsSelect(sessionWithArrayAsArray(), "test_array_parameterized_varchar_unicode"));
-        arrayVarcharUnicodeDataTypeTest(TestGreenplumTypeMapping::postgresArrayDataType)
-                .execute(getQueryRunner(), sessionWithArrayAsArray(), postgresCreateAndInsert("tpch.test_array_parameterized_varchar_unicode"));
+                .execute(getQueryRunner(), sessionWithArrayAsArray(), greenplumCreateAsSelect(sessionWithArrayAsArray(), "test_array_parameterized_varchar_unicode"));
+        arrayVarcharUnicodeDataTypeTest(TestGreenplumTypeMapping::greenplumArrayDataType)
+                .execute(getQueryRunner(), sessionWithArrayAsArray(), greenplumCreateAndInsert("tpch.test_array_parameterized_varchar_unicode"));
     }
 
     @Test
@@ -650,7 +650,7 @@ public class TestGreenplumTypeMapping
         DataTypeTest.create()
                 .addRoundTrip(arrayDataType(integerDataType(), "_int4"), asList(1, 2, 3))
                 .addRoundTrip(arrayDataType(varcharDataType(), "_text"), asList("a", "b"))
-                .execute(getQueryRunner(), sessionWithArrayAsArray(), postgresCreateAndInsert("tpch.test_array_with_native_name"));
+                .execute(getQueryRunner(), sessionWithArrayAsArray(), greenplumCreateAndInsert("tpch.test_array_with_native_name"));
     }
 
     @Test
@@ -665,7 +665,7 @@ public class TestGreenplumTypeMapping
                 .addRoundTrip(arrayDataType(timestampDataType()), singletonList(null))
                 .addRoundTrip(arrayDataType(prestoTimestampWithTimeZoneDataType()), asList())
                 .addRoundTrip(arrayDataType(prestoTimestampWithTimeZoneDataType()), singletonList(null))
-                .execute(getQueryRunner(), sessionWithArrayAsArray(), prestoCreateAsSelect(sessionWithArrayAsArray(), "test_array_empty_or_nulls"));
+                .execute(getQueryRunner(), sessionWithArrayAsArray(), greenplumCreateAsSelect(sessionWithArrayAsArray(), "test_array_empty_or_nulls"));
     }
 
     private DataTypeTest arrayDecimalTest(Function<DataType<BigDecimal>, DataType<List<BigDecimal>>> arrayTypeFactory)
@@ -737,7 +737,7 @@ public class TestGreenplumTypeMapping
     @Test
     public void testArrayMultidimensional()
     {
-        // for multidimensional arrays, PostgreSQL requires subarrays to have the same dimensions, including nulls
+        // for multidimensional arrays, Greenplum requires subarrays to have the same dimensions, including nulls
         // e.g. [[1], [1, 2]] and [null, [1, 2]] are not allowed, but [[null, null], [1, 2]] is allowed
         DataTypeTest.create()
                 .addRoundTrip(arrayDataType(arrayDataType(booleanDataType())), asList(asList(null, null, null)))
@@ -747,7 +747,7 @@ public class TestGreenplumTypeMapping
                         asList(new BigDecimal("193")),
                         asList(new BigDecimal("19")),
                         asList(new BigDecimal("-193"))))
-                .execute(getQueryRunner(), sessionWithArrayAsArray(), prestoCreateAsSelect(sessionWithArrayAsArray(), "test_array_2d"));
+                .execute(getQueryRunner(), sessionWithArrayAsArray(), greenplumCreateAsSelect(sessionWithArrayAsArray(), "test_array_2d"));
 
         DataTypeTest.create()
                 .addRoundTrip(arrayDataType(arrayDataType(arrayDataType(doubleDataType()))), asList(
@@ -758,7 +758,7 @@ public class TestGreenplumTypeMapping
                         asList(asList(LocalDate.of(1952, 4, 3), LocalDate.of(1970, 1, 1))),
                         asList(asList(null, LocalDate.of(1970, 1, 1))),
                         asList(asList(LocalDate.of(1970, 2, 3), LocalDate.of(2017, 7, 1)))))
-                .execute(getQueryRunner(), sessionWithArrayAsArray(), prestoCreateAsSelect(sessionWithArrayAsArray(), "test_array_3d"));
+                .execute(getQueryRunner(), sessionWithArrayAsArray(), greenplumCreateAsSelect(sessionWithArrayAsArray(), "test_array_3d"));
     }
 
     @Test
@@ -776,7 +776,7 @@ public class TestGreenplumTypeMapping
                 .addRoundTrip(arrayAsJsonDataType("_bool"), "[[true,false],[null,null]]")
                 .addRoundTrip(arrayAsJsonDataType("_bool"), "[[[null]]]")
                 .addRoundTrip(arrayAsJsonDataType("_bool"), "[]")
-                .execute(getQueryRunner(), session, postgresCreateAndInsert("tpch.test_boolean_array_as_json"));
+                .execute(getQueryRunner(), session, greenplumCreateAndInsert("tpch.test_boolean_array_as_json"));
 
         DataTypeTest.create()
                 .addRoundTrip(arrayAsJsonDataType("integer[]"), null)
@@ -786,7 +786,7 @@ public class TestGreenplumTypeMapping
                 .addRoundTrip(arrayAsJsonDataType("integer[]"), "[]")
                 .addRoundTrip(arrayAsJsonDataType("_int4"), "[]")
                 .addRoundTrip(arrayAsJsonDataType("_int4"), "[[0],[1],[2],[3]]")
-                .execute(getQueryRunner(), session, postgresCreateAndInsert("tpch.test_integer_array_as_json"));
+                .execute(getQueryRunner(), session, greenplumCreateAndInsert("tpch.test_integer_array_as_json"));
 
         DataTypeTest.create()
                 .addRoundTrip(arrayAsJsonDataType("double precision[]"), null)
@@ -796,7 +796,7 @@ public class TestGreenplumTypeMapping
                 .addRoundTrip(arrayAsJsonDataType("double precision[]"), "[]")
                 .addRoundTrip(arrayAsJsonDataType("_float8"), "[]")
                 .addRoundTrip(arrayAsJsonDataType("_float8"), "[[1.1],[2.2]]")
-                .execute(getQueryRunner(), session, postgresCreateAndInsert("tpch.test_double_array_as_json"));
+                .execute(getQueryRunner(), session, greenplumCreateAndInsert("tpch.test_double_array_as_json"));
 
         DataTypeTest.create()
                 .addRoundTrip(arrayAsJsonDataType("real[]"), null)
@@ -806,7 +806,7 @@ public class TestGreenplumTypeMapping
                 .addRoundTrip(arrayAsJsonDataType("real[]"), "[]")
                 .addRoundTrip(arrayAsJsonDataType("_float4"), "[]")
                 .addRoundTrip(arrayAsJsonDataType("_float4"), "[[1.1],[2.2]]")
-                .execute(getQueryRunner(), session, postgresCreateAndInsert("tpch.test_real_array_as_json"));
+                .execute(getQueryRunner(), session, greenplumCreateAndInsert("tpch.test_real_array_as_json"));
 
         DataTypeTest.create()
                 .addRoundTrip(arrayAsJsonDataType("varchar[]"), null)
@@ -814,19 +814,19 @@ public class TestGreenplumTypeMapping
                 .addRoundTrip(arrayAsJsonDataType("_text"), "[[\"one\",\"two\"],[\"three\",\"four\"]]")
                 .addRoundTrip(arrayAsJsonDataType("_text"), "[[\"one\",null]]")
                 .addRoundTrip(arrayAsJsonDataType("_text"), "[]")
-                .execute(getQueryRunner(), session, postgresCreateAndInsert("tpch.test_varchar_array_as_json"));
+                .execute(getQueryRunner(), session, greenplumCreateAndInsert("tpch.test_varchar_array_as_json"));
 
         DataTypeTest.create()
                 .addRoundTrip(arrayAsJsonDataType("date[]"), null)
                 .addRoundTrip(arrayAsJsonDataType("date[]"), "[\"2019-01-02\"]")
                 .addRoundTrip(arrayAsJsonDataType("date[]"), "[null,null]")
-                .execute(getQueryRunner(), session, postgresCreateAndInsert("tpch.test_timestamp_array_as_json"));
+                .execute(getQueryRunner(), session, greenplumCreateAndInsert("tpch.test_timestamp_array_as_json"));
 
         DataTypeTest.create()
                 .addRoundTrip(arrayAsJsonDataType("timestamp[]"), null)
                 .addRoundTrip(arrayAsJsonDataType("timestamp[]"), "[\"2019-01-02 03:04:05.789\"]")
                 .addRoundTrip(arrayAsJsonDataType("timestamp[]"), "[null,null]")
-                .execute(getQueryRunner(), session, postgresCreateAndInsert("tpch.test_timestamp_array_as_json"));
+                .execute(getQueryRunner(), session, greenplumCreateAndInsert("tpch.test_timestamp_array_as_json"));
 
         DataTypeTest.create()
                 .addRoundTrip(arrayAsJsonDataType("hstore[]"), null)
@@ -834,7 +834,7 @@ public class TestGreenplumTypeMapping
                 .addRoundTrip(arrayAsJsonDataType("hstore[]"), "[null,null]")
                 .addRoundTrip(hstoreArrayAsJsonDataType(), "[{\"a\":\"1\",\"b\":\"2\"},{\"a\":\"3\",\"d\":\"4\"}]")
                 .addRoundTrip(hstoreArrayAsJsonDataType(), "[{\"a\":null,\"b\":\"2\"}]")
-                .execute(getQueryRunner(), session, postgresCreateAndInsert("tpch.test_hstore_array_as_json"));
+                .execute(getQueryRunner(), session, greenplumCreateAndInsert("tpch.test_hstore_array_as_json"));
     }
 
     private static <E> DataType<List<E>> arrayDataType(DataType<E> elementType)
@@ -842,7 +842,7 @@ public class TestGreenplumTypeMapping
         return arrayDataType(elementType, format("ARRAY(%s)", elementType.getInsertType()));
     }
 
-    private static <E> DataType<List<E>> postgresArrayDataType(DataType<E> elementType)
+    private static <E> DataType<List<E>> greenplumArrayDataType(DataType<E> elementType)
     {
         return arrayDataType(elementType, elementType.getInsertType() + "[]");
     }
@@ -911,8 +911,8 @@ public class TestGreenplumTypeMapping
             Session session = Session.builder(getQueryRunner().getDefaultSession())
                     .setTimeZoneKey(TimeZoneKey.getTimeZoneKey(timeZoneId))
                     .build();
-            testCases.execute(getQueryRunner(), session, postgresCreateAndInsert("tpch.test_date"));
-            testCases.execute(getQueryRunner(), session, prestoCreateAsSelect("test_date"));
+            testCases.execute(getQueryRunner(), session, greenplumCreateAndInsert("tpch.test_date"));
+            testCases.execute(getQueryRunner(), session, greenplumCreateAsSelect("test_date"));
         }
     }
 
@@ -964,17 +964,17 @@ public class TestGreenplumTypeMapping
                 .build();
 
         if (insertWithPresto) {
-            tests.execute(getQueryRunner(), session, prestoCreateAsSelect(session, "test_time"));
+            tests.execute(getQueryRunner(), session, greenplumCreateAsSelect(session, "test_time"));
         }
         else {
-            tests.execute(getQueryRunner(), session, postgresCreateAndInsert("tpch.test_time"));
+            tests.execute(getQueryRunner(), session, greenplumCreateAndInsert("tpch.test_time"));
         }
     }
 
     @Test(dataProvider = "testTimestampDataProvider")
     public void testTimestamp(boolean insertWithPresto, ZoneId sessionZone)
     {
-        // using two non-JVM zones so that we don't need to worry what Postgres system zone is
+        // using two non-JVM zones so that we don't need to worry what Greenplum system zone is
         DataTypeTest tests = DataTypeTest.create(true)
                 .addRoundTrip(timestampDataType(), beforeEpoch)
                 .addRoundTrip(timestampDataType(), afterEpoch)
@@ -992,10 +992,10 @@ public class TestGreenplumTypeMapping
                 .build();
 
         if (insertWithPresto) {
-            tests.execute(getQueryRunner(), session, prestoCreateAsSelect(session, "test_timestamp"));
+            tests.execute(getQueryRunner(), session, greenplumCreateAsSelect(session, "test_timestamp"));
         }
         else {
-            tests.execute(getQueryRunner(), session, postgresCreateAndInsert("tpch.test_timestamp"));
+            tests.execute(getQueryRunner(), session, greenplumCreateAndInsert("tpch.test_timestamp"));
         }
     }
 
@@ -1011,11 +1011,11 @@ public class TestGreenplumTypeMapping
         DataSetup dataSetup;
         if (insertWithPresto) {
             dataType = arrayDataType(timestampDataType());
-            dataSetup = prestoCreateAsSelect(sessionWithArrayAsArray(), "test_array_timestamp");
+            dataSetup = greenplumCreateAsSelect(sessionWithArrayAsArray(), "test_array_timestamp");
         }
         else {
             dataType = arrayDataType(timestampDataType(), "timestamp[]");
-            dataSetup = postgresCreateAndInsert("tpch.test_array_timestamp");
+            dataSetup = greenplumCreateAndInsert("tpch.test_array_timestamp");
         }
         DataTypeTest tests = DataTypeTest.create(true)
                 .addRoundTrip(dataType, asList(beforeEpoch))
@@ -1051,7 +1051,7 @@ public class TestGreenplumTypeMapping
                 {true, jvmZone},
                 {false, jvmZone},
 
-                // using two non-JVM zones so that we don't need to worry what Postgres system zone is
+                // using two non-JVM zones so that we don't need to worry what Greenplum system zone is
                 {true, vilnius},
                 {false, vilnius},
 
@@ -1070,11 +1070,11 @@ public class TestGreenplumTypeMapping
         DataSetup dataSetup;
         if (insertWithPresto) {
             dataType = prestoTimestampWithTimeZoneDataType();
-            dataSetup = prestoCreateAsSelect("test_timestamp_with_time_zone");
+            dataSetup = greenplumCreateAsSelect("test_timestamp_with_time_zone");
         }
         else {
-            dataType = postgreSqlTimestampWithTimeZoneDataType();
-            dataSetup = postgresCreateAndInsert("tpch.test_timestamp_with_time_zone");
+            dataType = greenplumSqlTimestampWithTimeZoneDataType();
+            dataSetup = greenplumCreateAndInsert("tpch.test_timestamp_with_time_zone");
         }
 
         DataTypeTest tests = DataTypeTest.create(true)
@@ -1117,11 +1117,11 @@ public class TestGreenplumTypeMapping
         DataSetup dataSetup;
         if (insertWithPresto) {
             dataType = arrayDataType(prestoTimestampWithTimeZoneDataType());
-            dataSetup = prestoCreateAsSelect(sessionWithArrayAsArray(), "test_array_timestamp_with_time_zone");
+            dataSetup = greenplumCreateAsSelect(sessionWithArrayAsArray(), "test_array_timestamp_with_time_zone");
         }
         else {
-            dataType = arrayDataType(postgreSqlTimestampWithTimeZoneDataType(), "timestamptz[]");
-            dataSetup = postgresCreateAndInsert("tpch.test_array_timestamp_with_time_zone");
+            dataType = arrayDataType(greenplumSqlTimestampWithTimeZoneDataType(), "timestamptz[]");
+            dataSetup = greenplumCreateAndInsert("tpch.test_array_timestamp_with_time_zone");
         }
 
         DataTypeTest tests = DataTypeTest.create()
@@ -1136,8 +1136,8 @@ public class TestGreenplumTypeMapping
                 .addRoundTrip(dataType, asList(timeGapInVilnius.atZone(kathmandu)))
                 .addRoundTrip(dataType, asList(timeGapInKathmandu.atZone(vilnius)));
         if (!insertWithPresto) {
-            // Postgres results with non-DST time (winter time) for timeDoubledInJvmZone.atZone(jvmZone) while Java results with DST time
-            // When writing timestamptz arrays, Postgres JDBC driver converts java.sql.Timestamp to string representing date-time in JVM zone
+            // Greenplum results with non-DST time (winter time) for timeDoubledInJvmZone.atZone(jvmZone) while Java results with DST time
+            // When writing timestamptz arrays, Greenplum JDBC driver converts java.sql.Timestamp to string representing date-time in JVM zone
             // TODO upgrade driver or find a different way to write timestamptz array elements as a point in time values with org.postgresql.jdbc.PgArray (https://github.com/pgjdbc/pgjdbc/issues/1225#issuecomment-516312324)
             tests.addRoundTrip(dataType, asList(timeDoubledInJvmZone.atZone(jvmZone)));
         }
@@ -1157,16 +1157,16 @@ public class TestGreenplumTypeMapping
     public void testJson()
     {
         jsonTestCases(jsonDataType())
-                .execute(getQueryRunner(), prestoCreateAsSelect("presto_test_json"));
+                .execute(getQueryRunner(), greenplumCreateAsSelect("presto_test_json"));
         jsonTestCases(jsonDataType())
-                .execute(getQueryRunner(), postgresCreateAndInsert("tpch.postgresql_test_json"));
+                .execute(getQueryRunner(), greenplumCreateAndInsert("tpch.greenplum_test_json"));
     }
 
     @Test
     public void testJsonb()
     {
         jsonTestCases(jsonbDataType())
-                .execute(getQueryRunner(), postgresCreateAndInsert("tpch.postgresql_test_jsonb"));
+                .execute(getQueryRunner(), greenplumCreateAndInsert("tpch.greenplum_test_jsonb"));
     }
 
     private DataTypeTest jsonTestCases(DataType<String> jsonDataType)
@@ -1188,10 +1188,10 @@ public class TestGreenplumTypeMapping
     public void testHstore()
     {
         hstoreTestCases(hstoreDataType())
-                .execute(getQueryRunner(), postgresCreateAndInsert("tpch.postgresql_test_hstore"));
+                .execute(getQueryRunner(), greenplumCreateAndInsert("tpch.greenplum_test_hstore"));
 
         hstoreTestCases(varcharMapDataType())
-                .execute(getQueryRunner(), postgresCreatePrestoInsert("tpch.postgresql_test_hstore"));
+                .execute(getQueryRunner(), greenplumCreatePrestoInsert("tpch.greenplum_test_hstore"));
     }
 
     private DataTypeTest hstoreTestCases(DataType<Map<String, String>> varcharMapDataType)
@@ -1209,7 +1209,7 @@ public class TestGreenplumTypeMapping
     public void testUuid()
     {
         uuidTestCases(uuidDataType())
-                .execute(getQueryRunner(), prestoCreateAsSelect("presto_test_uuid"));
+                .execute(getQueryRunner(), greenplumCreateAsSelect("presto_test_uuid"));
     }
 
     private DataTypeTest uuidTestCases(DataType<java.util.UUID> uuidDataType)
@@ -1227,27 +1227,27 @@ public class TestGreenplumTypeMapping
                 .addRoundTrip(moneyDataType(), 10.)
                 .addRoundTrip(moneyDataType(), 10.54)
                 .addRoundTrip(moneyDataType(), 10_000_000.42)
-                .execute(getQueryRunner(), postgresCreateAndInsert("tpch.presto_test_money"));
+                .execute(getQueryRunner(), greenplumCreateAndInsert("tpch.presto_test_money"));
     }
 
     @Test
     public void testReal()
     {
         singlePrecisionFloatingPointTests(realDataType())
-                .execute(getQueryRunner(), prestoCreateAsSelect("presto_test_real"));
+                .execute(getQueryRunner(), greenplumCreateAsSelect("presto_test_real"));
 
-        singlePrecisionFloatingPointTests(postgreSqlRealDataType())
-                .execute(getQueryRunner(), postgresCreateAndInsert("tpch.postgresql_test_real"));
+        singlePrecisionFloatingPointTests(greenplumRealDataType())
+                .execute(getQueryRunner(), greenplumCreateAndInsert("tpch.greenplum_test_real"));
     }
 
     @Test
     public void testDouble()
     {
         doublePrecisionFloatinPointTests(doubleDataType())
-                .execute(getQueryRunner(), prestoCreateAsSelect("presto_test_double"));
+                .execute(getQueryRunner(), greenplumCreateAsSelect("presto_test_double"));
 
-        doublePrecisionFloatinPointTests(postgreSqlDoubleDataType())
-                .execute(getQueryRunner(), postgresCreateAndInsert("tpch.postgresql_test_double"));
+        doublePrecisionFloatinPointTests(greenplumDoubleDataType())
+                .execute(getQueryRunner(), greenplumCreateAndInsert("tpch.greenplum_test_double"));
     }
 
     private static DataTypeTest singlePrecisionFloatingPointTests(DataType<Float> floatType)
@@ -1348,17 +1348,17 @@ public class TestGreenplumTypeMapping
                 "timestamp with time zone",
                 TIMESTAMP_WITH_TIME_ZONE,
                 DateTimeFormatter.ofPattern("'TIMESTAMP '''yyyy-MM-dd HH:mm:ss.SSS VV''")::format,
-                // PostgreSQL does not store zone, only the point in time
+                // Greenplum does not store zone, only the point in time
                 zonedDateTime -> zonedDateTime.withZoneSameInstant(ZoneId.of("UTC")));
     }
 
-    public static DataType<ZonedDateTime> postgreSqlTimestampWithTimeZoneDataType()
+    public static DataType<ZonedDateTime> greenplumSqlTimestampWithTimeZoneDataType()
     {
         return dataType(
                 "timestamp with time zone",
                 TIMESTAMP_WITH_TIME_ZONE,
-                // PostgreSQL never examines the content of a literal string before determining its type, so `TIMESTAMP '.... {zone}'` won't work.
-                // PostgreSQL does not store zone, only the point in time
+                // Greenplum never examines the content of a literal string before determining its type, so `TIMESTAMP '.... {zone}'` won't work.
+                // Greenplum does not store zone, only the point in time
                 zonedDateTime -> DateTimeFormatter.ofPattern("'TIMESTAMP WITH TIME ZONE '''yyyy-MM-dd HH:mm:ss.SSS VV''").format(zonedDateTime.withZoneSameInstant(UTC)),
                 DateTimeFormatter.ofPattern("'TIMESTAMP '''yyyy-MM-dd HH:mm:ss.SSS VV''")::format,
                 zonedDateTime -> zonedDateTime.withZoneSameInstant(ZoneId.of("UTC")));
@@ -1476,22 +1476,22 @@ public class TestGreenplumTypeMapping
                 .build();
     }
 
-    private DataSetup prestoCreateAsSelect(String tableNamePrefix)
+    private DataSetup greenplumCreateAsSelect(String tableNamePrefix)
     {
-        return prestoCreateAsSelect(getSession(), tableNamePrefix);
+        return greenplumCreateAsSelect(getSession(), tableNamePrefix);
     }
 
-    private DataSetup prestoCreateAsSelect(Session session, String tableNamePrefix)
+    private DataSetup greenplumCreateAsSelect(Session session, String tableNamePrefix)
     {
         return new CreateAsSelectDataSetup(new PrestoSqlExecutor(getQueryRunner(), session), tableNamePrefix);
     }
 
-    private DataSetup postgresCreateAndInsert(String tableNamePrefix)
+    private DataSetup greenplumCreateAndInsert(String tableNamePrefix)
     {
         return new CreateAndInsertDataSetup(new JdbcSqlExecutor(greenplumServer.getJdbcUrl()), tableNamePrefix);
     }
 
-    private DataSetup postgresCreatePrestoInsert(String tableNamePrefix)
+    private DataSetup greenplumCreatePrestoInsert(String tableNamePrefix)
     {
         return new CreateAndPrestoInsertDataSetup(new JdbcSqlExecutor(greenplumServer.getJdbcUrl()), new PrestoSqlExecutor(getQueryRunner()), tableNamePrefix);
     }
@@ -1511,7 +1511,7 @@ public class TestGreenplumTypeMapping
         verify(zone.getRules().getValidOffsets(dateTime).size() == 2, "Expected %s to be doubled in %s", dateTime, zone);
     }
 
-    private static DataType<Float> postgreSqlRealDataType()
+    private static DataType<Float> greenplumRealDataType()
     {
         return dataType("real", RealType.REAL,
                 value -> {
@@ -1527,7 +1527,7 @@ public class TestGreenplumTypeMapping
                 Function.identity());
     }
 
-    private static DataType<Double> postgreSqlDoubleDataType()
+    private static DataType<Double> greenplumDoubleDataType()
     {
         return dataType("double precision", DoubleType.DOUBLE,
                 value -> {

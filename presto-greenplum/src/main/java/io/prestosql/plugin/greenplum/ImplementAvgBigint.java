@@ -38,7 +38,6 @@ import static io.prestosql.spi.type.BigintType.BIGINT;
 import static io.prestosql.spi.type.DoubleType.DOUBLE;
 import static java.lang.String.format;
 
-//TODO copied as-is from presto-postgresql
 public class ImplementAvgBigint
         implements AggregateFunctionRule
 {

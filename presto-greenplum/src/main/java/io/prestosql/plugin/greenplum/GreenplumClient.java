@@ -343,7 +343,7 @@ public class GreenplumClient
             case "json":
                 return Optional.of(jsonColumnMapping());
             case "timestamptz":
-                // PostgreSQL's "timestamp with time zone" is reported as Types.TIMESTAMP rather than Types.TIMESTAMP_WITH_TIMEZONE
+                // Greenplum's "timestamp with time zone" is reported as Types.TIMESTAMP rather than Types.TIMESTAMP_WITH_TIMEZONE
                 return Optional.of(timestampWithTimeZoneColumnMapping());
             case "hstore":
                 return Optional.of(hstoreColumnMapping(session));
@@ -353,7 +353,7 @@ public class GreenplumClient
             return Optional.of(typedVarcharColumnMapping(jdbcTypeName));
         }
         if (typeHandle.getJdbcType() == Types.TIME) {
-            // When inserting a time such as 12:34:56.999, Postgres returns 12:34:56.999999999. If we use rounding semantics, the time turns into 00:00:00.000 when
+            // When inserting a time such as 12:34:56.999, Greenplum returns 12:34:56.999999999. If we use rounding semantics, the time turns into 00:00:00.000 when
             // reading it back into a time(3). Hence, truncate instead
             return Optional.of(timeColumnMappingWithTruncation());
         }
@@ -490,7 +490,7 @@ public class GreenplumClient
         return ColumnMapping.longMapping(
                 TIMESTAMP_WITH_TIME_ZONE,
                 (resultSet, columnIndex) -> {
-                    // PostgreSQL does not store zone information in "timestamp with time zone" data type
+                    // Greenplum does not store zone information in "timestamp with time zone" data type
                     long millisUtc = resultSet.getTimestamp(columnIndex).getTime();
                     return packDateTimeWithZone(millisUtc, UTC_KEY);
                 },
@@ -500,7 +500,7 @@ public class GreenplumClient
     private static LongWriteFunction timestampWithTimeZoneWriteFunction()
     {
         return (statement, index, value) -> {
-            // PostgreSQL does not store zone information in "timestamp with time zone" data type
+            // Greenplum does not store zone information in "timestamp with time zone" data type
             long millisUtc = unpackMillisUtc(value);
             statement.setTimestamp(index, new Timestamp(millisUtc));
         };

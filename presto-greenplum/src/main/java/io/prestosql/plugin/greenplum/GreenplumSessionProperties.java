@@ -37,7 +37,7 @@ public final class GreenplumSessionProperties
         sessionProperties = ImmutableList.of(
                 enumProperty(
                         ARRAY_MAPPING,
-                        "Handling of PostgreSql arrays",
+                        "Handling of Greenplum arrays",
                         GreenplumConfig.ArrayMapping.class,
                         greenplumConfig.getArrayMapping(),
                         false));

@@ -21,7 +21,6 @@ public class GreenplumConfig
 {
     private ArrayMapping arrayMapping = ArrayMapping.DISABLED;
     private boolean includeSystemTables;
-    private boolean useGPDBDriver;
 
     public enum ArrayMapping
     {
@@ -52,18 +51,6 @@ public class GreenplumConfig
     public GreenplumConfig setIncludeSystemTables(boolean includeSystemTables)
     {
         this.includeSystemTables = includeSystemTables;
-        return this;
-    }
-
-    public boolean isUseGPDBDriver()
-    {
-        return useGPDBDriver;
-    }
-
-    @Config("greenplum.use-gpdb-driver")
-    public GreenplumConfig setUseGPDBDriver(boolean useGPDBDriver)
-    {
-        this.useGPDBDriver = useGPDBDriver;
         return this;
     }
 }

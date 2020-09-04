@@ -57,7 +57,6 @@ import static java.lang.Math.toIntExact;
 import static java.util.concurrent.TimeUnit.DAYS;
 import static org.joda.time.DateTimeZone.UTC;
 
-//TODO copied as-is from presto-postgresql
 final class TypeUtils
 {
     private TypeUtils() {}
@@ -183,7 +182,7 @@ final class TypeUtils
 
         if (TIMESTAMP_WITH_TIME_ZONE.equals(prestoType)) {
             long millisUtc = unpackMillisUtc((long) prestoNative);
-            // PostgreSQL does not store zone, only the point in time
+            // Greenplum does not store zone, only the point in time
             return new Timestamp(millisUtc);
         }
 
