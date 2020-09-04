@@ -16,8 +16,6 @@ package io.prestosql.plugin.greenplum;
 import com.google.common.collect.ImmutableMap;
 import io.prestosql.plugin.postgresql.TestPostgreSqlDistributedQueries;
 import io.prestosql.testing.QueryRunner;
-import io.prestosql.testing.sql.JdbcSqlExecutor;
-import io.prestosql.testing.sql.TestTable;
 import io.prestosql.tpch.TpchTable;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
